@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - 'site/**'
+      - 'tests/site/**'
+      - 'releases/2026-10/code/generator/build_item_bank.py'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 
@@ -26,6 +28,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+      - name: Verify browser generator against Python
+        run: python3 tests/site/check_generator.py
       - name: Configure Pages
         uses: actions/configure-pages@v6
       - name: Prepare static website

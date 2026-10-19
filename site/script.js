@@ -1,36 +1,95 @@
-const states = [
-  { leo: 15, james: 18, carol: 15 },
-  { leo: 17, james: 18, carol: 13 },
-  { leo: 15, james: 18, carol: 13 },
-  { leo: 12, james: 18, carol: 13 },
-];
+import { generateProblem } from "./generator.mjs?v=1";
 
-let step = 0;
-const nextButton = document.querySelector("#next-step");
-const resetButton = document.querySelector("#reset-example");
+const form = document.querySelector("#generator-form");
+const seedInput = document.querySelector("#seed");
+const lengthInput = document.querySelector("#length");
+const promptElement = document.querySelector("#generated-prompt");
+const copyButton = document.querySelector("#copy-prompt");
+const downloadButton = document.querySelector("#download-item");
+const trace = document.querySelector("#state-trace");
+const actionStatus = document.querySelector("#action-status");
+let currentProblem;
 
-function renderExample() {
-  for (const [name, value] of Object.entries(states[step])) {
-    document.querySelector(`#${name}-state`).textContent = value;
+function renderTrace(problem) {
+  const names = Object.keys(problem.initial_state);
+  const headRow = document.createElement("tr");
+  for (const label of ["Step", ...names]) {
+    const cell = document.createElement("th");
+    cell.scope = "col";
+    cell.textContent = label;
+    headRow.append(cell);
   }
-  document.querySelector("#state-label").textContent = step === 0 ? "Initial state" : `After update ${step}`;
-  document.querySelectorAll("[data-step]").forEach((row) => {
-    row.classList.toggle("is-done", Number(row.dataset.step) <= step);
+  document.querySelector("#trace-head").replaceChildren(headRow);
+  const rows = problem.states.map((state, index) => {
+    const row = document.createElement("tr");
+    const step = document.createElement("th");
+    step.scope = "row";
+    step.textContent = index === 0 ? "Initial" : index;
+    row.append(step);
+    for (const name of names) {
+      const cell = document.createElement("td");
+      cell.textContent = state[name];
+      if (name === problem.query_entity) cell.className = "target-state";
+      row.append(cell);
+    }
+    return row;
   });
-  const complete = step === states.length - 1;
-  document.querySelector("#answer-label").textContent = complete ? "Reference answer" : "Leo’s final score";
-  document.querySelector("#answer-value").textContent = complete ? states[step].leo : "?";
-  nextButton.disabled = complete;
-  nextButton.textContent = complete ? "Complete" : `Apply update ${step + 1}`;
-  resetButton.disabled = step === 0;
+  document.querySelector("#trace-body").replaceChildren(...rows);
 }
 
-nextButton.addEventListener("click", () => {
-  step += 1;
-  renderExample();
+function generate() {
+  currentProblem = generateProblem(seedInput.valueAsNumber, lengthInput.valueAsNumber);
+  const { seed, k, query_entity, gold, prompt } = currentProblem;
+  promptElement.textContent = prompt;
+  promptElement.scrollTop = 0;
+  document.querySelector("#output-meta").textContent = `Seed ${seed} · ${k} ${k === 1 ? "update" : "updates"}`;
+  document.querySelector("#reference-answer").textContent = gold;
+  document.querySelector("#answer-description").textContent = `${query_entity}’s points after ${k} ${k === 1 ? "update" : "updates"}.`;
+  trace.open = false;
+  renderTrace(currentProblem);
+  actionStatus.textContent = "";
+  copyButton.textContent = "Copy question";
+  document.querySelector("#generation-status").textContent = `Generated a question with seed ${seed} and ${k} updates. Reference answer: ${gold}.`;
+}
+
+form.addEventListener("submit", (event) => {
+  event.preventDefault();
+  generate();
 });
-resetButton.addEventListener("click", () => {
-  step = 0;
-  renderExample();
+
+document.querySelector("#new-seed").addEventListener("click", () => {
+  seedInput.value = Math.floor(Math.random() * 4294967296);
+  form.requestSubmit();
 });
-document.querySelector(".example-controls").hidden = false;
+
+copyButton.addEventListener("click", async () => {
+  const prompt = currentProblem.prompt;
+  try {
+    await navigator.clipboard.writeText(prompt);
+  } catch {
+    const selection = window.getSelection();
+    const range = document.createRange();
+    range.selectNodeContents(promptElement);
+    selection.removeAllRanges();
+    selection.addRange(range);
+    actionStatus.textContent = "Copy is unavailable in this browser. The question is selected for manual copying.";
+    return;
+  }
+  actionStatus.textContent = "Question copied.";
+});
+
+downloadButton.addEventListener("click", () => {
+  const { seed, k, probe_idx, prompt, gold } = currentProblem;
+  const item = { source: "browser-generated", seed, k, probe_idx, prompt, gold };
+  const url = URL.createObjectURL(new Blob([JSON.stringify(item, null, 2) + "\n"], { type: "application/json" }));
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `wmip-seed-${seed}-length-${k}.json`;
+  document.body.append(link);
+  link.click();
+  link.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+});
+
+generate();
+for (const element of [form, copyButton, downloadButton, trace]) element.hidden = false;
