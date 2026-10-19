@@ -11,7 +11,8 @@ const PROGRESS_KEY = "wmip-game-progress";
 const progress = JSON.parse(localStorage.getItem(PROGRESS_KEY) || "null");
 let seed = crypto.getRandomValues(new Uint32Array(1))[0];
 let length = progress?.length ?? 3;
-let round = progress?.round ?? 0;
+// Opening the page creates a new question, just like New question or Next round.
+let round = progress ? progress.round + 1 : 0;
 // Each new seed starts its own reproducible sequence while the round keeps rising.
 let probeIndex = 0;
 let correct = progress?.correct ?? 0;
