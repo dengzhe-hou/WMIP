@@ -7,8 +7,8 @@ from pathlib import Path
 import sys
 import unittest
 
-ROOT = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(ROOT / "frozen"))
+ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 from check_api_records import endpoint_checks, read_jsonl, response_checks
 
 
@@ -18,9 +18,9 @@ class ApiIdentityChecks(unittest.TestCase):
         cls.request = "anthropic/claude-sonnet-4.5"
         cls.canonical = "anthropic/claude-4.5-sonnet-20250929"
         cls.provider = "Anthropic"
-        cls.endpoint = json.loads((ROOT / "results/api/provenance/claude-sonnet-4-5-20250929.endpoints.20261003T151915Z.json").read_text())
-        cls.records = read_jsonl(ROOT / "results/api/smoke/claude-sonnet-4-5-20250929.20261003T151915Z.jsonl")
-        cls.ids = [item["item_id"] for item in read_jsonl(ROOT / "frozen/bundle/smoke_bank.jsonl")]
+        cls.endpoint = json.loads((ROOT / "data/run_records/api/provenance/claude-sonnet-4-5-20250929.endpoints.20261003T151915Z.json").read_text())
+        cls.records = read_jsonl(ROOT / "data/run_records/api/smoke/claude-sonnet-4-5-20250929.20261003T151915Z.jsonl")
+        cls.ids = [item["item_id"] for item in read_jsonl(ROOT / "code/runner/smoke_bank.jsonl")]
 
     def responses_pass(self, records):
         return all(response_checks(records, self.ids, self.request,

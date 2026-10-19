@@ -7,8 +7,9 @@ same parser options as A; only max_tokens changes from 16 to 512. Item ids get t
 import json
 from pathlib import Path
 
-FROZEN = Path(__file__).resolve().parents[1] / "frozen/item_bank.jsonl"
-OUT = Path(__file__).resolve().parent / "budget_bank.jsonl"
+ROOT = Path(__file__).resolve().parents[2]
+FROZEN = ROOT / "data/item_bank/item_bank.jsonl"
+OUT = ROOT / "data/item_bank/budget_bank.jsonl"
 
 rows = [json.loads(line) for line in FROZEN.open(encoding="utf-8")]
 core = [r for r in rows if r["block"] == "A"]

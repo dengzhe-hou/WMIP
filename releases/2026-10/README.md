@@ -85,6 +85,15 @@ python code/generator/bank_checks/check5_structure.py
 
 Expected: `cmp` prints nothing, so the rebuilt bank is byte-identical to the packaged bank (840 items). The three checks end with `CHECK 1: PASS`, `CHECK 4: PASS` and `CHECK 5: PASS`. Check 1 recomputes every answer from the prompt text alone.
 
+The large-budget bank and the saved API-identity checks can also be reproduced offline:
+
+```bash
+python code/budget/build_budget_bank.py
+python code/runner/api/test_api_identity.py
+```
+
+Expected: the budget builder writes the same 60 records to `data/item_bank/budget_bank.jsonl`; the identity regression suite reports four passing tests using the packaged records. These commands make no model calls.
+
 ### 2. Score the raw responses (cheap)
 
 ```bash
