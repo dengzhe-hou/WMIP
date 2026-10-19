@@ -10,6 +10,8 @@ const promptElement = $("#generated-prompt");
 let seed = crypto.getRandomValues(new Uint32Array(1))[0];
 let length = 3;
 let round = 0;
+// Each new seed starts its own reproducible sequence while the round keeps rising.
+let probeIndex = 0;
 let correct = 0;
 let answered = 0;
 let step = 0;
@@ -53,7 +55,7 @@ function renderTrace() {
 }
 
 function prepareRound() {
-  problem = generateProblem(seed, length, round);
+  problem = generateProblem(seed, length, probeIndex);
   step = 0;
   $("#round-label").textContent = `Round ${round + 1}`;
   $("#score-label").textContent = `${correct} correct · ${answered} answered`;
@@ -122,6 +124,7 @@ action.addEventListener("click", () => {
     $("#player-answer").focus({ preventScroll: true });
   } else if (phase === "result") {
     round++;
+    probeIndex++;
     prepareRound();
   }
 });
@@ -136,7 +139,8 @@ $("#new-question").addEventListener("click", () => {
   seed = crypto.getRandomValues(new Uint32Array(1))[0];
   $("#seed").value = seed;
   $("#length").value = length;
-  round = 0;
+  round++;
+  probeIndex = 0;
   prepareRound();
   $(".game-settings").open = false;
   action.focus({ preventScroll: true });
@@ -146,7 +150,7 @@ settingsForm.addEventListener("submit", (event) => {
   event.preventDefault();
   seed = $("#seed").valueAsNumber;
   length = $("#length").valueAsNumber;
-  round = correct = answered = 0;
+  round = probeIndex = correct = answered = 0;
   prepareRound();
   $(".game-settings").open = false;
   action.focus({ preventScroll: true });
