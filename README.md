@@ -1,4 +1,4 @@
-# Working-Memory-Inspired Probe
+# WMIP: Working-Memory-Inspired Probe
 
 Evaluation materials for **A Working-Memory-Inspired Programmable Probe of Cumulative State Tracking in Large Language Models**.
 
@@ -33,7 +33,7 @@ This writes 15,120 item-level scores and summary CSVs to the temporary directory
 
 The root [`code/`](code/) and [`data/`](data/) directories preserve the earlier WMF-AM experiments. They use historical model panels, task versions, prompts, and scoring procedures. They are not inputs to the current 18-model evaluation and must not be pooled with it. Use the versioned release above to reproduce the current paper.
 
-The [earlier README at commit `f50db70`](https://github.com/dengzhe-hou/WMF-AM/blob/f50db70/README.md) remains available as a historical record. Its descriptions and conclusions do not describe the current release.
+The [earlier README at commit `f50db70`](https://github.com/dengzhe-hou/WMIP/blob/f50db70/README.md) remains available as a historical record. Its descriptions and conclusions do not describe the current release.
 
 ## Licenses
 
