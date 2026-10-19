@@ -16,6 +16,18 @@ Start with the [release README](releases/2026-10/README.md) for protocols, model
 | Figure and table generators | [`analysis/paper/`](releases/2026-10/analysis/paper/) |
 | BFCL scores and model metadata | [`external/`](releases/2026-10/external/) |
 
+## Hugging Face item banks
+
+The item banks are also available on [Hugging Face](https://huggingface.co/datasets/dengzhe-hou/WMIP). The default configuration contains the 840 main-bank items; five additional configurations preserve the extension, large-budget and protocol-variant banks. Model responses, scoring code and complete reproduction materials are in the GitHub release linked above.
+
+```python
+from datasets import load_dataset
+
+items = load_dataset("dengzhe-hou/WMIP", split="test")
+```
+
+The dataset card documents the configurations and the lossless JSON encoding of reference answers and metadata.
+
 ## Offline quick start
 
 From the repository root, rescore all 18 models on the 840-item main bank using Python and its standard library only.
