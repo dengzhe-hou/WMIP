@@ -7,7 +7,7 @@ const answerForm = $("#answer-form");
 const action = $("#game-action");
 const solution = $("#solution");
 const promptElement = $("#generated-prompt");
-let seed = 2026;
+let seed = crypto.getRandomValues(new Uint32Array(1))[0];
 let length = 3;
 let round = 0;
 let correct = 0;
@@ -217,5 +217,6 @@ batchForm.addEventListener("submit", async (event) => {
   }
 });
 
+$("#seed").value = seed;
 prepareRound();
 $("#playground").hidden = false;
