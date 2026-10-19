@@ -28,8 +28,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
-      - name: Verify browser generator against Python
-        run: python3 tests/site/check_generator.py
+      - name: Verify browser generators against Python
+        run: |
+          python3 tests/site/check_generator.py
+          python3 tests/site/check_batch.py
       - name: Configure Pages
         uses: actions/configure-pages@v6
       - name: Prepare static website
