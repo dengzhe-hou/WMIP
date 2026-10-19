@@ -12,7 +12,7 @@
   <meta property="og:url" content="https://dengzhe-hou.github.io/WMIP/">
   <link rel="canonical" href="https://dengzhe-hou.github.io/WMIP/">
   <link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=4">
+  <link rel="stylesheet" href="styles.css?v=5">
   <script type="module" src="script.js?v=4"></script>
 </head>
 <body>
@@ -20,27 +20,16 @@
   <header class="site-header content-width">
     <a class="wordmark" href="#" aria-label="WMIP home">WMIP</a>
     <nav aria-label="Main navigation">
-      <a href="#generator">Try it</a>
+      <a href="https://huggingface.co/datasets/dengzhe-hou/WMIP">Dataset</a>
       <a href="https://github.com/dengzhe-hou/WMIP/blob/main/releases/2026-10/README.md">Documentation</a>
     </nav>
   </header>
 
   <main id="main">
-    <section class="hero content-width" aria-labelledby="hero-title">
-      <h1 id="hero-title">Working-Memory-<br>Inspired Probe</h1>
-      <p class="hero-description">Generate new state-tracking tests for language models.<br class="desktop-break"> Try a round, or export questions with reference answers.</p>
-      <div class="hero-actions">
-        <a class="button" href="#generator">Play a round</a>
-        <a class="text-link" href="https://huggingface.co/datasets/dengzhe-hou/WMIP">Frozen dataset <span aria-hidden="true">›</span></a>
-      </div>
-      <p class="release-note">The frozen main bank contains 840 items.<br>18 evaluated models · October 2026</p>
-    </section>
-
     <section class="generator-section" id="generator" aria-labelledby="generator-title">
       <div class="content-width">
-        <h2 id="generator-title">Can you keep track?</h2>
-        <p class="section-description">Remember the points. Follow the updates. Give the final score.</p>
-        <noscript><p class="noscript-note">Enable JavaScript to play or generate a batch. The frozen dataset is available above.</p></noscript>
+        <h1 id="generator-title">Can you keep track?</h1>
+        <noscript><p class="noscript-note">Enable JavaScript to play or generate a batch. The frozen dataset is linked in the navigation.</p></noscript>
 
         <div class="playground" id="playground" hidden>
           <div class="game-card">
@@ -48,7 +37,7 @@
             <p class="output-meta" id="output-meta">Seed 2026 · 3 updates</p>
             <div class="game-stage" aria-live="polite" aria-atomic="true">
               <div id="ready-stage">
-                <h3>Remember the starting points.</h3>
+                <h3>Remember these scores.</h3>
                 <div class="starting-points" id="starting-points"></div>
                 <p class="stage-note">They will disappear when you start.</p>
               </div>
@@ -108,14 +97,15 @@
             </form>
           </details>
         </div>
-        <p class="generator-note">A playable preview of the core task. Published results use the frozen bank. <a href="https://github.com/dengzhe-hou/WMIP/blob/main/releases/2026-10/code/generator/build_item_bank.py">Generator source</a></p>
+        <p class="generator-note">Core-task preview. <a href="https://github.com/dengzhe-hou/WMIP/blob/main/releases/2026-10/code/generator/build_item_bank.py">Generator source</a></p>
       </div>
     </section>
 
-    <div class="guide content-width">
-      <p>Code, evaluation results and offline reproduction.</p>
-      <a class="text-link" href="https://github.com/dengzhe-hou/WMIP/blob/main/releases/2026-10/README.md">Read the documentation <span aria-hidden="true">›</span></a>
-    </div>
+    <section class="project-summary content-width" aria-labelledby="project-title">
+      <h2 id="project-title">Working-Memory-Inspired Probe</h2>
+      <p>Generate new state-tracking tests for language models.<br>The frozen main bank contains 840 items.</p>
+      <a class="text-link" href="https://github.com/dengzhe-hou/WMIP">Explore the project <span aria-hidden="true">›</span></a>
+    </section>
   </main>
 
   <footer class="site-footer content-width">
