@@ -7,16 +7,22 @@ const answerForm = $("#answer-form");
 const action = $("#game-action");
 const solution = $("#solution");
 const promptElement = $("#generated-prompt");
+const PROGRESS_KEY = "wmip-game-progress";
+const progress = JSON.parse(localStorage.getItem(PROGRESS_KEY) || "null");
 let seed = crypto.getRandomValues(new Uint32Array(1))[0];
-let length = 3;
-let round = 0;
+let length = progress?.length ?? 3;
+let round = progress?.round ?? 0;
 // Each new seed starts its own reproducible sequence while the round keeps rising.
 let probeIndex = 0;
-let correct = 0;
-let answered = 0;
+let correct = progress?.correct ?? 0;
+let answered = progress?.answered ?? 0;
 let step = 0;
 let phase = "ready";
 let problem;
+
+function saveProgress() {
+  localStorage.setItem(PROGRESS_KEY, JSON.stringify({ round, correct, answered, length }));
+}
 
 function showStage(name) {
   phase = name;
@@ -81,6 +87,7 @@ function prepareRound() {
   $("#action-status").textContent = "";
   action.textContent = "Start";
   showStage("ready");
+  saveProgress();
 }
 
 function showUpdate() {
@@ -97,6 +104,7 @@ function finishRound(value, revealed = false) {
   if (!revealed) {
     answered++;
     if (value === problem.gold) correct++;
+    saveProgress();
   }
   $("#result-title").textContent = revealed ? "Answer revealed." : value === problem.gold ? "Correct." : "The reference answer is";
   $("#reference-answer").textContent = problem.gold;
@@ -232,5 +240,6 @@ batchForm.addEventListener("submit", async (event) => {
 });
 
 $("#seed").value = seed;
+$("#length").value = length;
 prepareRound();
 $("#playground").hidden = false;
