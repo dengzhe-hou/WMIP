@@ -1,4 +1,4 @@
-# State-tracking probe: evaluation materials (anonymous review copy)
+# WMIP: evaluation materials
 
 This package holds the item banks, the raw model responses, the scoring and analysis code, and the stored analysis outputs behind the paper "A Working-Memory-Inspired Programmable Probe of Cumulative State Tracking in Large Language Models". It contains no model weights and no credentials.
 
