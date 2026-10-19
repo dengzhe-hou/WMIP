@@ -18,10 +18,10 @@ function renderExample() {
     row.classList.toggle("is-done", Number(row.dataset.step) <= step);
   });
   const complete = step === states.length - 1;
-  document.querySelector("#answer-label").textContent = complete ? "Reference answer · Leo's final state" : "How many points does Leo have?";
+  document.querySelector("#answer-label").textContent = complete ? "Reference answer" : "Leo’s final score";
   document.querySelector("#answer-value").textContent = complete ? states[step].leo : "?";
   nextButton.disabled = complete;
-  nextButton.textContent = complete ? "All updates applied" : `Apply update ${step + 1} →`;
+  nextButton.textContent = complete ? "Complete" : `Apply update ${step + 1}`;
   resetButton.disabled = step === 0;
 }
 
@@ -35,15 +35,3 @@ resetButton.addEventListener("click", () => {
 });
 document.querySelector(".example-controls").hidden = false;
 
-document.querySelectorAll("[data-copy]").forEach((button) => {
-  button.addEventListener("click", async () => {
-    const code = document.getElementById(button.dataset.copy).textContent;
-    try {
-      await navigator.clipboard.writeText(code);
-      button.textContent = "Copied";
-    } catch {
-      button.textContent = "Select code to copy";
-    }
-    window.setTimeout(() => { button.textContent = "Copy"; }, 2500);
-  });
-});

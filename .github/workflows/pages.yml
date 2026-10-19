@@ -5,7 +5,6 @@ on:
     branches: [main]
     paths:
       - 'site/**'
-      - 'releases/2026-10/analysis/paper/figures/fig_overview.svg'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 
@@ -31,9 +30,8 @@ jobs:
         uses: actions/configure-pages@v6
       - name: Prepare static website
         run: |
-          mkdir -p "$RUNNER_TEMP/wmip-site/assets"
+          mkdir -p "$RUNNER_TEMP/wmip-site"
           cp -R site/. "$RUNNER_TEMP/wmip-site/"
-          cp releases/2026-10/analysis/paper/figures/fig_overview.svg "$RUNNER_TEMP/wmip-site/assets/fig_overview.svg"
       - name: Upload website
         uses: actions/upload-pages-artifact@v5
         with:

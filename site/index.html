@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>WMIP | Working-Memory-Inspired Probe</title>
-  <meta name="description" content="A programmable probe of cumulative state tracking in large language models. Explore a worked example, load the item banks, and reproduce the evaluation.">
-  <meta name="theme-color" content="#f6f7f2">
+  <meta name="description" content="A programmable probe of cumulative state tracking in large language models. Explore an example, the dataset and the evaluation code.">
+  <meta name="theme-color" content="#ffffff">
   <meta property="og:title" content="WMIP | Working-Memory-Inspired Probe">
-  <meta property="og:description" content="Follow a changing state. Explore the tasks, data and reproducible evaluation behind WMIP.">
+  <meta property="og:description" content="A programmable probe of cumulative state tracking in large language models.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://dengzhe-hou.github.io/WMIP/">
   <link rel="canonical" href="https://dengzhe-hou.github.io/WMIP/">
@@ -17,54 +17,41 @@
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
-  <header class="site-header">
-    <a class="wordmark" href="#" aria-label="WMIP home"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>WMIP<span class="wordmark-period">.</span></a>
+  <header class="site-header content-width">
+    <a class="wordmark" href="#" aria-label="WMIP home">WMIP</a>
     <nav aria-label="Main navigation">
-      <a href="#example">The task</a>
-      <a href="#workflow">Workflow</a>
-      <a href="#get-started">Get started</a>
+      <a href="#example">Example</a>
+      <a href="https://github.com/dengzhe-hou/WMIP/blob/main/releases/2026-10/README.md">Documentation</a>
     </nav>
-    <a class="header-link" href="https://github.com/dengzhe-hou/WMIP">GitHub <svg class="external-arrow" viewBox="0 0 16 16" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 12 12 4M4 4h8v8"/></svg></a>
   </header>
 
   <main id="main">
-    <section class="hero section-width" aria-labelledby="hero-title">
-      <div class="hero-copy">
-        <p class="eyebrow"><span class="status-dot" aria-hidden="true"></span> WORKING-MEMORY-INSPIRED PROBE</p>
-        <h1 id="hero-title">A programmable probe of <span>state tracking.</span></h1>
-        <p class="hero-description">How well can a language model follow a state as it changes? WMIP generates sequences of updates, varies the response protocol, and scores answers against code-computed reference states.</p>
-        <div class="hero-actions">
-          <a class="button button-primary" href="https://huggingface.co/datasets/dengzhe-hou/WMIP">Explore the data <svg class="external-arrow" viewBox="0 0 16 16" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 12 12 4M4 4h8v8"/></svg></a>
-          <a class="text-link" href="#get-started">Reproduce the evaluation <span aria-hidden="true">↓</span></a>
-        </div>
-        <p class="hero-note">Public item banks, model responses and offline scoring.</p>
+    <section class="hero content-width" aria-labelledby="hero-title">
+      <h1 id="hero-title">Working-Memory-<br>Inspired Probe</h1>
+      <p class="hero-description">A programmable probe of cumulative state tracking<br class="desktop-break"> in large language models.</p>
+      <div class="hero-actions">
+        <a class="button" href="https://huggingface.co/datasets/dengzhe-hou/WMIP">Dataset</a>
+        <a class="text-link" href="https://github.com/dengzhe-hou/WMIP/tree/main/releases/2026-10">Code and results <span aria-hidden="true">›</span></a>
       </div>
+      <p class="release-note">840 main-bank items · 18 models · October 2026</p>
+    </section>
 
-      <div class="example-panel" id="example" aria-labelledby="example-title">
-        <div class="panel-heading"><span class="eyebrow">A WORKED EXAMPLE</span><span class="small-pill">Core · K = 3</span></div>
-        <h2 id="example-title">Keep track of Leo.</h2>
-        <p class="example-intro">Three people. Three updates. One final state.</p>
-        <div class="state-heading"><span id="state-label">Initial state</span><span>points</span></div>
-        <div class="state-grid" aria-live="polite" aria-atomic="true">
-          <div class="entity target"><span>Leo <span class="target-label">target</span></span><strong id="leo-state">15</strong></div>
-          <div class="entity"><span>James</span><strong id="james-state">18</strong></div>
-          <div class="entity"><span>Carol</span><strong id="carol-state">15</strong></div>
-        </div>
-        <ol class="update-list" aria-label="Updates in order">
-          <li data-step="1"><span class="step-number">1</span><span>Carol gives <b>2</b> points to Leo.</span><svg class="step-check" viewBox="0 0 16 16" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m3 8 3 3 7-7"/></svg></li>
-          <li data-step="2"><span class="step-number">2</span><span>Leo loses <b>2</b> points.</span><svg class="step-check" viewBox="0 0 16 16" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m3 8 3 3 7-7"/></svg></li>
-          <li data-step="3"><span class="step-number">3</span><span>Leo loses <b>3</b> points.</span><svg class="step-check" viewBox="0 0 16 16" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m3 8 3 3 7-7"/></svg></li>
-        </ol>
-        <div class="example-answer" aria-live="polite"><span id="answer-label">How many points does Leo have?</span><strong id="answer-value">?</strong></div>
-        <div class="example-controls" hidden>
-          <button class="button button-dark" id="next-step" type="button">Apply update 1 <span aria-hidden="true">→</span></button>
-          <button class="reset-button" id="reset-example" type="button" aria-label="Reset the example" disabled>Reset</button>
-        </div>
-        <noscript><p class="static-answer">Reference answer: 15 + 2 − 2 − 3 = <strong>12</strong>.</p></noscript>
-        <p class="example-caption">A walkthrough of a frozen item, not a model response. The original prompt asks for only the final number.</p>
-        <details class="source-prompt">
-          <summary>Read the original prompt <span aria-hidden="true">+</span></summary>
-          <pre>You will track a sequence of point updates. You cannot refer back to the initial state after reading it once.
+    <section class="example-section" id="example" aria-labelledby="example-title">
+      <div class="content-width">
+        <h2 id="example-title">A three-step example.</h2>
+        <p class="section-description">Apply the updates and track Leo’s points.</p>
+
+        <div class="example-layout">
+          <div class="sequence">
+            <h3>The updates</h3>
+            <ol class="update-list" aria-label="Updates in order">
+              <li data-step="1"><span class="step-number" aria-hidden="true">1</span><span>Carol gives 2 points to Leo.</span></li>
+              <li data-step="2"><span class="step-number" aria-hidden="true">2</span><span>Leo loses 2 points.</span></li>
+              <li data-step="3"><span class="step-number" aria-hidden="true">3</span><span>Leo loses 3 points.</span></li>
+            </ol>
+            <details class="source-prompt">
+              <summary>View the original prompt</summary>
+              <pre>You will track a sequence of point updates. You cannot refer back to the initial state after reading it once.
 
 Initial state:
 Leo: 15 points, James: 18 points, Carol: 15 points
@@ -77,63 +64,37 @@ Operations (apply in order):
 After all operations, how many points does Leo have?
 
 Respond with ONLY the final number.</pre>
-          <a href="https://huggingface.co/datasets/dengzhe-hou/WMIP/viewer/main_2026_10/test?row=0">Source item: A-k3-s2026-p0 <svg class="external-arrow" viewBox="0 0 16 16" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 12 12 4M4 4h8v8"/></svg></a>
-        </details>
+              <a href="https://huggingface.co/datasets/dengzhe-hou/WMIP/viewer/main_2026_10/test?row=0">Source item A-k3-s2026-p0</a>
+            </details>
+          </div>
+
+          <div class="state-panel">
+            <h3 id="state-label">Initial state</h3>
+            <div class="state-grid" aria-live="polite" aria-atomic="true">
+              <div class="entity target"><span>Leo</span><strong id="leo-state">15</strong></div>
+              <div class="entity"><span>James</span><strong id="james-state">18</strong></div>
+              <div class="entity"><span>Carol</span><strong id="carol-state">15</strong></div>
+            </div>
+            <div class="example-answer" aria-live="polite"><span id="answer-label">Leo’s final score</span><strong id="answer-value">?</strong></div>
+            <div class="example-controls" hidden>
+              <button class="button" id="next-step" type="button">Apply update 1</button>
+              <button class="reset-button" id="reset-example" type="button" aria-label="Reset the example" disabled>Reset</button>
+            </div>
+            <noscript><p class="static-answer">Reference answer: 15 + 2 − 2 − 3 = <strong>12</strong>.</p></noscript>
+          </div>
+        </div>
+        <p class="example-caption">Worked example from the main item bank. Values are computed from the updates.</p>
       </div>
     </section>
 
-    <div class="release-strip section-width" aria-label="Current release facts">
-      <div class="release-label"><span class="eyebrow">CURRENT RELEASE</span><span>October 2026</span></div>
-      <div class="release-stat"><strong>840</strong><span>main-bank items</span></div>
-      <div class="release-stat"><strong>18</strong><span>evaluated models</span></div>
-      <div class="release-stat"><strong>6</strong><span>dataset configurations</span></div>
+    <div class="guide content-width">
+      <p>Protocols, scoring and offline reproduction.</p>
+      <a class="text-link" href="https://github.com/dengzhe-hou/WMIP/blob/main/releases/2026-10/README.md">Read the documentation <span aria-hidden="true">›</span></a>
     </div>
-
-    <section class="workflow section-width" id="workflow" aria-labelledby="workflow-title">
-      <div class="section-heading"><p class="eyebrow">01 / THE WORKFLOW</p><h2 id="workflow-title">From an update sequence<br>to a reproducible score.</h2><p>Keep the task, response protocol and scoring rule explicit. The release includes the materials needed to inspect each step.</p></div>
-      <div class="workflow-steps">
-        <article><span class="outline-number">01</span><h3>Generate</h3><p>Start from a known state and apply an ordered sequence of updates. Compute the reference answer in code.</p></article>
-        <article><span class="outline-number">02</span><h3>Vary the protocol</h3><p>Explore sequence lengths, wordings, instructions, response budgets and queries about intermediate or multiple states.</p></article>
-        <article><span class="outline-number">03</span><h3>Score and compare</h3><p>Apply the documented answer rules, inspect truncation, and compare probe scores with the included external criteria.</p></article>
-      </div>
-      <figure class="overview-figure">
-        <div class="figure-scroll" tabindex="0" role="region" aria-label="Evaluation overview diagram. Scroll horizontally on small screens.">
-          <img src="assets/fig_overview.svg" width="1080" height="337" loading="lazy" alt="The published workflow: generate a state-tracking item, vary the response protocol, score its answer, and compare task conditions and external criteria.">
-        </div>
-        <figcaption><span>Evaluation overview from the public release.</span><a href="assets/fig_overview.svg">Open full-size figure <svg class="external-arrow" viewBox="0 0 16 16" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 12 12 4M4 4h8v8"/></svg></a></figcaption>
-      </figure>
-    </section>
-
-    <section class="materials-section" aria-labelledby="materials-title">
-      <div class="section-width materials-grid">
-        <div class="section-heading"><p class="eyebrow">02 / THE MATERIALS</p><h2 id="materials-title">Open the task.<br>Inspect the evidence.</h2><p>The main bank, large-budget condition and intermediate-state / multi-target extension are kept distinct, with their prompts and scoring rules documented.</p></div>
-        <div class="resource-list">
-          <a class="resource" href="https://huggingface.co/datasets/dengzhe-hou/WMIP"><span class="resource-index">A</span><div><h3>Item banks</h3><p>Browse prompts, reference answers and item metadata. Load 840 main-bank items by default.</p><span class="resource-meta">HUGGING FACE DATASET</span></div><svg class="external-arrow resource-arrow" viewBox="0 0 16 16" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 12 12 4M4 4h8v8"/></svg></a>
-          <a class="resource" href="https://github.com/dengzhe-hou/WMIP/tree/main/releases/2026-10"><span class="resource-index">B</span><div><h3>Code and responses</h3><p>Generators, saved model responses, run records, scoring scripts, analyses and figures.</p><span class="resource-meta">VERSIONED GITHUB RELEASE</span></div><svg class="external-arrow resource-arrow" viewBox="0 0 16 16" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 12 12 4M4 4h8v8"/></svg></a>
-          <a class="resource" href="https://github.com/dengzhe-hou/WMIP/blob/main/releases/2026-10/README.md"><span class="resource-index">C</span><div><h3>Reproduction guide</h3><p>Model identities, response protocols, scoring rules and step-by-step offline commands.</p><span class="resource-meta">DOCUMENTATION</span></div><svg class="external-arrow resource-arrow" viewBox="0 0 16 16" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 12 12 4M4 4h8v8"/></svg></a>
-        </div>
-      </div>
-    </section>
-
-    <section class="get-started section-width" id="get-started" aria-labelledby="start-title">
-      <div class="section-heading"><p class="eyebrow">03 / GET STARTED</p><h2 id="start-title">A few lines to begin.</h2><p>Explore the item bank, or rescore the saved responses. Offline scoring needs only Python's standard library.</p></div>
-      <div class="code-grid">
-        <article class="code-card"><div class="code-heading"><h3>Load the item bank</h3><span class="code-language">PYTHON</span></div><p>Install <code>datasets</code>, then load the default test split.</p><div class="code-window"><div class="code-toolbar"><span>840 items · default configuration</span><button type="button" data-copy="load-code" aria-label="Copy the data-loading command">Copy</button></div><pre><code id="load-code">from datasets import load_dataset
-
-items = load_dataset(
-    "dengzhe-hou/WMIP", split="test"
-)</code></pre></div><p class="code-footnote">Reference answers are stored as <code>gold_json</code>. Use <code>json.loads()</code> to restore their original types.</p></article>
-        <article class="code-card"><div class="code-heading"><h3>Reproduce the main scores</h3><span class="code-language">TERMINAL</span></div><p>Clone the repository and rescore all 18 models.</p><div class="code-window"><div class="code-toolbar"><span>15,120 item-level scores</span><button type="button" data-copy="score-code" aria-label="Copy the offline scoring commands">Copy</button></div><pre><code id="score-code">git clone https://github.com/dengzhe-hou/WMIP.git
-cd WMIP/releases/2026-10
-score_dir=$(mktemp -d)
-python analysis/score_bank.py --out-dir "$score_dir" \
-    data/responses/local/*.jsonl data/responses/api/*.jsonl</code></pre></div><p class="code-footnote">Scoring makes no model calls and needs no GPU or API key. The <a href="https://github.com/dengzhe-hou/WMIP/blob/main/releases/2026-10/README.md">full guide</a> covers the other protocols.</p></article>
-      </div>
-    </section>
-
-    <section class="about-release section-width" aria-label="About this release"><p class="eyebrow">ABOUT WMIP</p><p>Evaluation materials for <cite>A Working-Memory-Inspired Programmable Probe of Cumulative State Tracking in Large Language Models</cite>. The October release and the earlier WMF-AM experiments are separate versions; use the versioned release to reproduce the current evaluation.</p><a class="text-link" href="https://github.com/dengzhe-hou/WMIP">Explore the repository <svg class="external-arrow" viewBox="0 0 16 16" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 12 12 4M4 4h8v8"/></svg></a></section>
   </main>
 
-  <footer class="site-footer section-width"><a class="wordmark" href="#">WMIP<span class="wordmark-period">.</span></a><p>Code <a href="https://github.com/dengzhe-hou/WMIP/blob/main/releases/2026-10/LICENSE">MIT</a> · Author-owned data and documentation <a href="https://github.com/dengzhe-hou/WMIP/blob/main/releases/2026-10/LICENSE-DATA">CC BY 4.0</a><br>Third-party material is covered by the release <a href="https://github.com/dengzhe-hou/WMIP/blob/main/releases/2026-10/NOTICE">NOTICE</a>.</p><a class="back-top" href="#">Back to top ↑</a></footer>
+  <footer class="site-footer content-width">
+    <p>Code <a href="https://github.com/dengzhe-hou/WMIP/blob/main/releases/2026-10/LICENSE">MIT</a> · Author-owned data and documentation <a href="https://github.com/dengzhe-hou/WMIP/blob/main/releases/2026-10/LICENSE-DATA">CC BY 4.0</a> · <a href="https://github.com/dengzhe-hou/WMIP/blob/main/releases/2026-10/NOTICE">Third-party terms</a></p>
+  </footer>
 </body>
 </html>
