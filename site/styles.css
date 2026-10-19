@@ -91,7 +91,7 @@ progress::-webkit-progress-bar { background: var(--surface); }
 progress::-webkit-progress-value { background: var(--blue); }
 progress::-moz-progress-bar { background: var(--blue); }
 .result-answer { font-size: var(--display); line-height: 1.2; font-weight: 600; margin: 12px 0; font-variant-numeric: tabular-nums; }
-.game-actions { text-align: center; }
+.game-actions { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 20px; }
 .game-actions .button { min-width: 136px; }
 .answer-form { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 12px 20px; }
 input { width: 100%; min-width: 0; height: 44px; border: 1px solid var(--line); border-radius: 10px; background: #fff; padding: 8px 12px; font-size: var(--body); }

@@ -132,6 +132,16 @@ answerForm.addEventListener("submit", (event) => {
 });
 $("#reveal-answer").addEventListener("click", () => finishRound(null, true));
 
+$("#new-question").addEventListener("click", () => {
+  seed = crypto.getRandomValues(new Uint32Array(1))[0];
+  $("#seed").value = seed;
+  $("#length").value = length;
+  round = correct = answered = 0;
+  prepareRound();
+  $(".game-settings").open = false;
+  action.focus({ preventScroll: true });
+});
+
 settingsForm.addEventListener("submit", (event) => {
   event.preventDefault();
   seed = $("#seed").valueAsNumber;
