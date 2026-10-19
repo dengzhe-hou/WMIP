@@ -34,4 +34,3 @@ resetButton.addEventListener("click", () => {
   renderExample();
 });
 document.querySelector(".example-controls").hidden = false;
-
