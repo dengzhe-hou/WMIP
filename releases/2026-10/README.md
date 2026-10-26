@@ -21,6 +21,8 @@ The paper refers to the blocks by name. This package uses the following codes in
 
 ## Get the release
 
+The fixed public version is [v2026.10.1](https://github.com/dengzhe-hou/WMIP/releases/tag/v2026.10.1). Its [release notes](RELEASE_NOTES.md) describe the reuse improvements; [CITATION.cff](../../CITATION.cff) provides the software citation.
+
 For a GitHub clone, enter `releases/2026-10/`; it already contains the materials and you do not need either supplementary archive. All commands below run from this release directory.
 
 If you obtained the two supplementary archives instead, extract both into the same directory. Together they form one release tree. The original archives preserve their original contents; the current GitHub release additionally includes the public reuse helper and callable example.
@@ -66,6 +68,8 @@ File and script names that contain `wmf_am` use the internal project name.
 
 See the repository's [Evaluate your model](../../README.md#evaluate-your-model) for an OpenAI-compatible endpoint command and the [minimal callable example](examples/evaluate_callable.py) for your own Python inference function. The runner saves raw responses, resumes unfinished requests, and respects each item's optional `system` message and `max_tokens` budget. Do not replace the budget with a single value for all blocks: the main bank includes 16-, 48- and 512-token items.
 
+The callable example also resumes when rerun with the same output directory. It appends responses, skips existing successful records and retries failed or unfinished items. Empty, incorrect and truncated responses remain completed items. Changing the model or inference settings requires a new output directory. Saved records are checked against their current bank items before new calls.
+
 For existing answers, use the small public JSONL interface:
 
 ```bash
@@ -81,6 +85,8 @@ Each answer needs `item_id` and `response`; optional `finish_reason` reports tru
 
 Use unchanged IDs from the selected bank and preserve the model's full response. Missing or failed answers are reported separately; accuracy uses answered items, so report the scored and missing counts with it. `my-scores/responses.jsonl` holds the converted records; `scored_items.csv` and the summary CSVs are produced by the same scorer as the released model responses.
 
+The terminal summary displays each task's name, scored/total count, missing count, accuracy and truncation count. E/F show Parser 1 and Parser 2 separately; the other tasks use their existing specified rule. An all-missing task shows `-` for accuracy. Individual task subsets, including Written steps alone, are supported. See the [output preview](../../README.md#read-the-results) for a real released model; the CSV schemas and scoring rules remain unchanged.
+
 Core/Depth integer items use exactly-one-integer scoring; Written steps uses the documented last-integer rule. E/F retain both documented parsers. Read the block-specific columns rather than treating all answer types as string equality. Match the released prompts, budgets and thinking-disabled inference mode when comparing with released results, and describe any departures.
 
 JSONL downloaded from the website generator works as `--bank` as well. These newly generated Core items are exploratory evaluations, separate from the frozen 840-item main bank. Their CSVs may have empty diagnostics for blocks absent from that bank.
@@ -94,14 +100,14 @@ import json
 from datasets import load_dataset
 from wmip import load_items
 
-rows = load_dataset("dengzhe-hou/WMIP", split="test")
+rows = load_dataset("dengzhe-hou/WMIP", split="test", revision="v2026.10.1")
 items = load_items(rows)
 with open("hf-main.jsonl", "w", encoding="utf-8") as handle:
     for item in items:
         handle.write(json.dumps(item, ensure_ascii=False) + "\n")
 ```
 
-Run this from the release directory so `wmip.py` is importable. Use `hf-main.jsonl` as `--bank` in the runner and scoring commands above, or pass these main-bank `items` directly to `evaluate` and `score` as in the callable example. To select another bank, pass its configuration name as the second argument to `load_dataset`; the [dataset card](https://huggingface.co/datasets/dengzhe-hou/WMIP#dataset-configurations) lists all six configurations. The superseded plural variant is provenance only and excluded from the final analysis.
+Run this from the release directory so `wmip.py` is importable. Use `hf-main.jsonl` as `--bank` in the runner and scoring commands above, or pass these main-bank `items` directly to `evaluate` and `score` as in the callable example. The dataset tag `v2026.10.1` fixes this bank version. To select another bank, pass its configuration name as the second argument to `load_dataset` and keep the same `revision`; the [dataset card](https://huggingface.co/datasets/dengzhe-hou/WMIP#dataset-configurations) lists all six configurations. The superseded plural variant is provenance only and excluded from the final analysis.
 
 For K/L extension banks, use the same `wmip.py score` command with the corresponding `--bank` file. The helper selects the existing `analysis/score_ext.py`, preserving its entity-label and ordered-list rules. It writes K/L-specific columns in `scored_items.csv` rather than the main scorer's six CSVs. This extension scorer accepts actual model responses and rejects synthetic records; its released analyses are described in reproduction step 8.
 

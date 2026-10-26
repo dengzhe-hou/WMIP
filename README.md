@@ -2,16 +2,16 @@
 
 Evaluation materials for **A Working-Memory-Inspired Programmable Probe of Cumulative State Tracking in Large Language Models**.
 
-[Project website](https://dengzhe-hou.github.io/WMIP/) · [Hugging Face dataset](https://huggingface.co/datasets/dengzhe-hou/WMIP) · [Reproduction guide](releases/2026-10/README.md)
+[Project website](https://dengzhe-hou.github.io/WMIP/) · [Hugging Face dataset](https://huggingface.co/datasets/dengzhe-hou/WMIP) · [Stable release](https://github.com/dengzhe-hou/WMIP/releases/tag/v2026.10.1) · [Reproduction guide](releases/2026-10/README.md)
 
 The current October 2026 release is in [`releases/2026-10/`](releases/2026-10/). It contains the generator, frozen item banks, model responses, execution metadata, scoring and analysis code, and generated tables and figures for the 18-model evaluation. Each model has 840 main-bank requests, 60 large-budget requests, and 180 intermediate-state and multi-target requests.
 
 ## Evaluate your model
 
-Clone the repository and enter the current release. A clone already contains the reproduction materials; supplementary archives are not needed.
+Clone the stable `v2026.10.1` release and enter its evaluation directory. A clone already contains the reproduction materials; supplementary archives are not needed. See the [release notes](releases/2026-10/RELEASE_NOTES.md) for changes in this version.
 
 ```bash
-git clone https://github.com/dengzhe-hou/WMIP.git
+git clone --branch v2026.10.1 https://github.com/dengzhe-hou/WMIP.git
 cd WMIP/releases/2026-10
 ```
 
@@ -35,6 +35,8 @@ For your own inference code, edit `generate(item)` in the [minimal Python exampl
 ```bash
 python examples/evaluate_callable.py --out-dir my-callable-run --label my-model
 ```
+
+Rerun the same command after an interruption to resume. The callable keeps existing successful response records and retries unfinished or failed requests. Incorrect, empty and truncated answers are completed responses and are kept. Use a new output directory when changing the model or inference settings.
 
 To try the plumbing without a model call:
 
@@ -62,6 +64,26 @@ python wmip.py score --bank data/item_bank/item_bank.jsonl \
 Only `item_id` and `response` are required. Include `finish_reason` when available so truncation can be reported; failed requests can carry an `error`. Unanswered and failed items remain marked as missing; report the scored and missing counts with accuracy. The helper creates runner-compatible response records and the release scorer's CSVs, without asking you to supply internal execution fields.
 
 You can also use JSONL exported by the [website generator](https://dengzhe-hou.github.io/WMIP/) as `--bank`. Newly generated Core items are exploratory evaluations, separate from results on the frozen bank. [Hugging Face loading and decoding](releases/2026-10/README.md#hugging-face-items) use the same helper. It selects the existing K/L scorer for extension banks, which writes its own item-level CSV.
+
+## Read the results
+
+Scoring prints each task's name, scored/total count, missing count and accuracy. Assignment and Sets/counts show Parser 1 and Parser 2 in parallel; other tasks use the `Accuracy` column. Accuracy excludes missing responses and displays `-` when no answers were scored. Full-precision values and format diagnostics remain in the CSVs.
+
+For example, rescoring the stored Qwen3 4B responses prints the following. This uses the released responses and makes no new model calls.
+
+```text
+model: qwen3-4b-instruct-2507
+Task                      Scored/total Missing  Accuracy  Parser 1  Parser 2 Truncated
+A Core                           60/60       0      1.7%         -         -        40
+B Depth                        140/140       0      0.0%         -         -        32
+C Arithmetic                     90/90       0     93.3%         -         -         0
+D Cancellation                 100/100       0     55.0%         -         -        29
+E Assignment                     90/90       0         -     96.7%     96.7%         0
+F Sets/counts                    90/90       0         -     54.4%     54.4%         5
+G Wordings                     150/150       0     14.7%         -         -       111
+H Instructions                   60/60       0      0.0%         -         -        31
+I Written steps                  60/60       0    100.0%         -         -         0
+```
 
 ## Reproduce the published responses offline
 
@@ -94,6 +116,10 @@ The [Hugging Face dataset](https://huggingface.co/datasets/dengzhe-hou/WMIP) con
 The root [`code/`](code/) and [`data/`](data/) directories preserve the earlier WMF-AM experiments. They use historical model panels, task versions, prompts, and scoring procedures. They are not inputs to the current 18-model evaluation and must not be pooled with it. Use the versioned release above to reproduce the current paper.
 
 The [earlier README at commit `f50db70`](https://github.com/dengzhe-hou/WMIP/blob/f50db70/README.md) remains available as a historical record. Its descriptions and conclusions do not describe the current release.
+
+## Citation
+
+Use [CITATION.cff](CITATION.cff), or GitHub's **Cite this repository** button, to cite software release `2026.10.1`. The citation identifies these versioned evaluation materials. Paper citations should use the matching manuscript version.
 
 ## Licenses
 

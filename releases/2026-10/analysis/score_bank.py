@@ -311,6 +311,12 @@ COMPLIANCE_COLUMNS = ["model", "scope", "n_int_items", "n_scored", "n_missing", 
 G_TEMPLATE_COLUMNS = ["model", "template", "n_items", "n_scored", "n_missing",
                       "n_correct_first_int", "acc_first_int", "n_correct_last_int", "acc_last_int",
                       "n_correct_strict", "acc_strict", "n_truncated", "truncated_rate"]
+TASK_NAMES = {
+    "A": "Core", "B": "Depth", "C": "Arithmetic", "D": "Cancellation",
+    "E": "Assignment", "F": "Sets/counts", "G": "Wordings", "H": "Instructions",
+    "I": "Written steps", "K": "Intermediate states", "L": "Multi-target",
+    "A512": "Large budget",
+}
 
 
 def blank(value: Any) -> Any:
@@ -427,6 +433,36 @@ def write_csv(path: Path, rows: list[dict[str, Any]], columns: list[str] | None 
         writer.writerows(rows)
 
 
+def print_task_summary(groups: dict[Any, dict[str, int]]) -> None:
+    """Display existing block counts without pooling distinct task protocols."""
+    has_parsers = any(block in ("E", "F") for _, block in groups)
+    print("Accuracy uses each task's specified rule; missing items are excluded.")
+    if has_parsers:
+        print("Assignment and Sets/counts show both documented parsers side by side.")
+    for model in sorted({model for model, _ in groups}):
+        print(f"\nmodel: {model}")
+        header = f"{'Task':25s} {'Scored/total':>12s} {'Missing':>7s} {'Accuracy':>9s}"
+        if has_parsers:
+            header += f" {'Parser 1':>9s} {'Parser 2':>9s}"
+        print(header + f" {'Truncated':>9s}")
+        for _, block in sorted(key for key in groups if key[0] == model):
+            g = groups[(model, block)]
+            scored = g["n_scored"]
+
+            def percent(column: str) -> str:
+                return f"{100 * g[column] / scored:.1f}%" if scored else "-"
+
+            task = f"{block} {TASK_NAMES.get(block, block)}"
+            accuracy = "-" if block in ("E", "F") else percent("n_correct_strict")
+            coverage = f"{scored}/{g['n_items']}"
+            line = f"{task:25s} {coverage:>12s} {g['n_missing']:>7d} {accuracy:>9s}"
+            if has_parsers:
+                parser1 = percent("n_correct_submitted") if block in ("E", "F") else "-"
+                parser2 = percent("n_correct_strict") if block in ("E", "F") else "-"
+                line += f" {parser1:>9s} {parser2:>9s}"
+            print(line + f" {g['n_finish_length']:>9d}")
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("outputs", nargs="+", type=Path, help="runner output files, one per model")
@@ -469,16 +505,7 @@ def main(argv: list[str] | None = None) -> int:
     if loaded[0][2]:
         print("SYNTHETIC outputs: these are not model results.")
     print(f"bank items: {len(bank)}   models: {len(labels)}")
-    print(f"{'model':32s} {'A strict':>9s} {'A subm.':>8s} {'compliance':>10s} {'missing':>8s} {'length':>7s}")
-    overall = {row["model"]: row for row in compliance if row["scope"] == "ALL_INT"}
-    for label in sorted(labels):
-        a = by_block[(label, "A")]
-        missing = sum(g["n_missing"] for (model, _), g in by_block.items() if model == label)
-        length = sum(g["n_finish_length"] for (model, _), g in by_block.items() if model == label)
-        compliant = int(overall[label]["n_bare"]) + int(overall[label]["n_single_in_text"])
-        print(f"{label:32s} {rate(a['n_correct_strict'], a['n_scored'], 3):>9s} "
-              f"{rate(a['n_correct_submitted'], a['n_scored'], 3):>8s} "
-              f"{rate(compliant, overall[label]['n_scored'], 3):>10s} {missing:>8d} {length:>7d}")
+    print_task_summary(by_block)
     print(f"written to {args.out_dir}")
     return 0
 

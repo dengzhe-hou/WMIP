@@ -1,0 +1,30 @@
+cff-version: 1.2.0
+message: >-
+  If you use these evaluation materials, please cite this software release.
+type: software
+title: "WMIP: Working-Memory-Inspired Probe"
+authors:
+  - family-names: Hou
+    given-names: Dengzhe
+  - family-names: Jiang
+    given-names: Lingyu
+  - family-names: Li
+    given-names: Deng
+  - family-names: Li
+    given-names: Zirui
+  - family-names: Lin
+    given-names: Fangzhou
+  - family-names: Yamada
+    given-names: Kazunori D
+version: 2026.10.1
+date-released: "2026-10-26"
+repository-code: "https://github.com/dengzhe-hou/WMIP"
+url: "https://github.com/dengzhe-hou/WMIP/releases/tag/v2026.10.1"
+abstract: >-
+  Evaluation materials for a programmable probe of cumulative state tracking
+  in large language models, including generators, item banks, model responses,
+  scoring and analysis code, and tools for evaluating additional models.
+keywords:
+  - cumulative state tracking
+  - large language models
+  - evaluation

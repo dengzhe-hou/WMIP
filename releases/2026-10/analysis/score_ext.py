@@ -19,6 +19,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+from collections import defaultdict
 import csv
 import json
 import re
@@ -124,6 +125,16 @@ def main() -> int:
         writer.writerows(rows)
     missing = sum(row["status"] == "missing" for row in rows)
     print(f"scored {len(rows)} rows for {len(seen)} models; missing {missing}; wrote {args.out_dir / 'scored_items.csv'}")
+    groups = defaultdict(lambda: defaultdict(int))
+    for row in rows:
+        group = groups[(row["model"], row["block"])]
+        group["n_items"] += 1
+        group["n_missing"] += row["status"] == "missing"
+        if row["status"] == "answered":
+            group["n_scored"] += 1
+            group["n_correct_strict"] += row["correct"]
+            group["n_finish_length"] += row["truncated"]
+    score_bank.print_task_summary(groups)
     return 0
 
 

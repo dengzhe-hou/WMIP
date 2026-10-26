@@ -126,23 +126,71 @@ def _record(item: dict[str, Any], result: str | Mapping[str, Any], label: str,
 def evaluate(items: Iterable[Mapping[str, Any]],
              generate: Callable[[dict[str, Any]], str | Mapping[str, Any]],
              out_path: str | Path, label: str, *, synthetic: bool = False) -> Path:
-    """Call ``generate(item)`` for each item and write runner-compatible JSONL.
+    """Call ``generate(item)`` and append runner-compatible JSONL, resuming by ID.
 
     Return response text, or ``{"response": text, "finish_reason": "stop"}``.
     If a request fails, return ``{"error": "failure description"}``; it remains
     missing during scoring. Unexpected Python exceptions stop the run and leave
-    already written records available. Provider telemetry is never invented.
+    already written records available. Rerunning with the same out_path skips
+    every error-free response, including empty, incorrect or truncated answers,
+    and appends retries for failed or absent items without rewriting any record.
+    All saved records must match the current label, synthetic flag and bank
+    fields before any callback runs. Items not yet recorded use the current bank.
+    Use a fresh out_path if you change your model or inference settings; Python
+    callback settings cannot be inspected. Provider telemetry is never invented.
     Pass only prompt/system to the model, never the item's reference answer.
+    Reasoning traces remain subject to the released scorer's rejection rule.
     """
     bank = load_items(items)
     out_path = Path(out_path)
+    done = _completed_items(bank, out_path, label, synthetic)
+    pending = [item for item in bank if item["item_id"] not in done]
+    if not pending:
+        return out_path
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    with out_path.open("w", encoding="utf-8") as handle:
-        for item in bank:
+    with out_path.open("a", encoding="utf-8") as handle:
+        for item in pending:
             record = _record(item, generate(dict(item)), label, synthetic, "user-callable")
             handle.write(json.dumps(record, ensure_ascii=False) + "\n")
             handle.flush()
     return out_path
+
+
+def _completed_items(bank: list[dict[str, Any]], out_path: Path,
+                     label: str, synthetic: bool) -> set[str]:
+    """Validate existing records before spending any further model calls."""
+    if not out_path.exists():
+        return set()
+    by_id = {item["item_id"]: item for item in bank}
+    done = set()
+    for record in _read_jsonl(out_path):
+        item_id = record.get("item_id")
+        if item_id not in by_id:
+            raise ValueError(f"{out_path}: saved item_id is not in the bank: {item_id}; "
+                             "use a fresh out_path")
+        item = by_id[item_id]
+        expected = {key: item.get(key) for key in
+                    ("prompt", "system", "max_tokens", "gold", "answer_type")}
+        expected.update(label=label, synthetic=synthetic)
+        for key, value in expected.items():
+            saved = record.get(key, False) if key == "synthetic" else record.get(key)
+            if type(saved) is not type(value) or saved != value:
+                raise ValueError(f"{out_path}: {item_id}: {key} differs; use a fresh out_path")
+        if "error" not in record:
+            raise ValueError(f"{out_path}: {item_id}: saved record is missing error; "
+                             "use a fresh out_path")
+        if record["error"] is not None:
+            if not isinstance(record["error"], str):
+                raise ValueError(f"{out_path}: {item_id}: error must be a string or null; "
+                                 "use a fresh out_path")
+            continue
+        if not isinstance(record.get("raw_response"), str):
+            raise ValueError(f"{out_path}: {item_id}: completed record needs raw_response text; "
+                             "use a fresh out_path")
+        if item_id in done:
+            raise ValueError(f"{out_path}: two final records for {item_id}; use a fresh out_path")
+        done.add(item_id)
+    return done
 
 
 def import_responses(items: Iterable[Mapping[str, Any]], responses: str | Path,
