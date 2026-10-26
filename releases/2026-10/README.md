@@ -19,9 +19,11 @@ The paper refers to the blocks by name. This package uses the following codes in
 | L | Multi-target |
 | A512 | Large budget |
 
-## The two archives
+## Get the release
 
-The materials come as two archives. Extract both archives into the same directory. Together they form one tree, and every command below is run from the root of that tree.
+For a GitHub clone, enter `releases/2026-10/`; it already contains the materials and you do not need either supplementary archive. All commands below run from this release directory.
+
+If you obtained the two supplementary archives instead, extract both into the same directory. Together they form one release tree. The original archives preserve their original contents; the current GitHub release additionally includes the public reuse helper and callable example.
 
 | Archive | Holds |
 | --- | --- |
@@ -33,9 +35,11 @@ The materials come as two archives. Extract both archives into the same director
 ## Contents
 
 ```
+wmip.py                 reuse helper: item loading, callable evaluation, answer import and scoring
+examples/               minimal model-function adapter with a synthetic demo
 code/generator/          build_item_bank.py and three bank checks
 code/generator/ext/      blocks K and L: build_ext_bank.py, the generator modules and manifests it reads, five bank checks
-code/runner/             run_wmf_am_bank.py (the only client that talks to a model), model list, smoke items,
+code/runner/             run_wmf_am_bank.py (OpenAI-compatible chat client), model list, smoke items,
                          local serving scripts (as run on a SLURM cluster), API commands and identity check
 data/item_bank/          item_bank.jsonl, the bank of 840 requests per model, and the build log;
                          three bank files for blocks K and L (180 requests per model)
@@ -58,15 +62,60 @@ The main evaluation has 15,120 response records (18 models, 840 requests each, n
 
 File and script names that contain `wmf_am` use the internal project name.
 
+## Reuse with your model
+
+See the repository's [Evaluate your model](../../README.md#evaluate-your-model) for an OpenAI-compatible endpoint command and the [minimal callable example](examples/evaluate_callable.py) for your own Python inference function. The runner saves raw responses, resumes unfinished requests, and respects each item's optional `system` message and `max_tokens` budget. Do not replace the budget with a single value for all blocks: the main bank includes 16-, 48- and 512-token items.
+
+For existing answers, use the small public JSONL interface:
+
+```bash
+python wmip.py score --bank data/item_bank/item_bank.jsonl \
+    --responses answers.jsonl --label my-model --out-dir my-scores
+```
+
+Each answer needs `item_id` and `response`; optional `finish_reason` reports truncation, and `error` marks a failed request. For example:
+
+```json
+{"item_id":"A-k3-s2026-p0","response":"12","finish_reason":"stop"}
+```
+
+Use unchanged IDs from the selected bank and preserve the model's full response. Missing or failed answers are reported separately; accuracy uses answered items, so report the scored and missing counts with it. `my-scores/responses.jsonl` holds the converted records; `scored_items.csv` and the summary CSVs are produced by the same scorer as the released model responses.
+
+Core/Depth integer items use exactly-one-integer scoring; Written steps uses the documented last-integer rule. E/F retain both documented parsers. Read the block-specific columns rather than treating all answer types as string equality. Match the released prompts, budgets and thinking-disabled inference mode when comparing with released results, and describe any departures.
+
+JSONL downloaded from the website generator works as `--bank` as well. These newly generated Core items are exploratory evaluations, separate from the frozen 840-item main bank. Their CSVs may have empty diagnostics for blocks absent from that bank.
+
+### Hugging Face items
+
+The [Hugging Face dataset](https://huggingface.co/datasets/dengzhe-hou/WMIP) is an optional alternative to the local frozen JSONL files. Only this access route needs the `datasets` package. The helper accepts its rows and decodes `gold_json` and `metadata_json`, preserving the original reference types and optional fields:
+
+```python
+import json
+from datasets import load_dataset
+from wmip import load_items
+
+rows = load_dataset("dengzhe-hou/WMIP", split="test")
+items = load_items(rows)
+with open("hf-main.jsonl", "w", encoding="utf-8") as handle:
+    for item in items:
+        handle.write(json.dumps(item, ensure_ascii=False) + "\n")
+```
+
+Run this from the release directory so `wmip.py` is importable. Use `hf-main.jsonl` as `--bank` in the runner and scoring commands above, or pass these main-bank `items` directly to `evaluate` and `score` as in the callable example. To select another bank, pass its configuration name as the second argument to `load_dataset`; the [dataset card](https://huggingface.co/datasets/dengzhe-hou/WMIP#dataset-configurations) lists all six configurations. The superseded plural variant is provenance only and excluded from the final analysis.
+
+For K/L extension banks, use the same `wmip.py score` command with the corresponding `--bank` file. The helper selects the existing `analysis/score_ext.py`, preserving its entity-label and ordered-list rules. It writes K/L-specific columns in `scored_items.csv` rather than the main scorer's six CSVs. This extension scorer accepts actual model responses and rejects synthetic records; its released analyses are described in reproduction step 8.
+
+For the large-budget condition, the public helper reports the one-integer rule; the paired one-integer/last-integer analyses remain in `analysis/score_budget.py` and reproduction step 6. Score each bank separately rather than mixing main and K/L items.
+
 ## Requirements
 
 The checks below were run with Python 3.13.12, numpy 2.4.3, scipy 1.17.1 and matplotlib 3.10.8.
 
-- The generators, the runner and the scorers use the Python standard library only.
+- The generators, runner, scorers, reuse helper and callable example use the Python standard library only. Loading from Hugging Face optionally needs `datasets`.
 - The analyses need numpy and scipy.
 - The figures need matplotlib and the Arial font. With other versions or another font the figures may differ in their bytes.
 
-No GPU, model weights, API key or network access is needed for any step below.
+No GPU, model weights, API key or network access is needed for the offline reproduction steps below. Evaluating a new model requires your inference setup; using Hugging Face requires access to the dataset or a local cache.
 
 ## Reproduction steps
 

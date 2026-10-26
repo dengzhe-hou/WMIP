@@ -56,12 +56,16 @@ process.stdout.write(JSON.stringify(batches));
             assert item == {
                 "source": "browser-generated",
                 "item_id": f"core-s{seed}-k{k}-p{probe_idx}",
+                "block": "A",
                 "seed": seed,
                 "k": k,
                 "probe_idx": probe_idx,
                 "prompt": prompt,
                 "gold": problem["gold"],
                 "answer_type": "int",
+                "max_tokens": 16,
+                "n_relevant_ops": problem["n_relevant_ops"],
+                "legacy_scoring": "wmf_am_frozen_v1.parse_answer",
             }, f"Mismatch for seed={seed}, k={k}, probe={probe_idx}"
             checked += 1
     print(f"PASS: {len(cases)} JSONL batches, {checked} records match Python prompts and answers.")

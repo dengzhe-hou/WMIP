@@ -304,6 +304,13 @@ ITEM_COLUMNS = ["model", "item_id", "block", "answer_type", "k", "seed", "templa
                 "n_relevant_ops", "gold", "status", "finish_reason", "n_integers", "format",
                 "rule_strict", "correct_strict", "rule_submitted", "correct_submitted",
                 "correct_first_int", "correct_last_int", "truncated", "synthetic", "raw_response"]
+ACCURACY_COLUMNS = ["n_items", "n_scored", "n_missing", "n_correct_strict", "acc_strict",
+                    "n_correct_submitted", "acc_submitted", "n_finish_length"]
+COMPLIANCE_COLUMNS = ["model", "scope", "n_int_items", "n_scored", "n_missing", "n_bare",
+                      "n_single_in_text", "n_noncompliant", "compliance_rate", "bare_rate", "n_finish_length"]
+G_TEMPLATE_COLUMNS = ["model", "template", "n_items", "n_scored", "n_missing",
+                      "n_correct_first_int", "acc_first_int", "n_correct_last_int", "acc_last_int",
+                      "n_correct_strict", "acc_strict", "n_truncated", "truncated_rate"]
 
 
 def blank(value: Any) -> Any:
@@ -447,15 +454,17 @@ def main(argv: list[str] | None = None) -> int:
     by_block = tally(rows, lambda row: (row["model"], row["block"]))
     write_csv(args.out_dir / "accuracy_by_block.csv", accuracy_rows(by_block, ["model", "block"]))
     by_k = tally([row for row in rows if row["block"] in ("A", "B")], lambda row: (row["model"], row["block"], row["k"]))
-    write_csv(args.out_dir / "accuracy_by_k.csv", accuracy_rows(by_k, ["model", "block", "k"]))
+    write_csv(args.out_dir / "accuracy_by_k.csv", accuracy_rows(by_k, ["model", "block", "k"]),
+              ["model", "block", "k", *ACCURACY_COLUMNS])
     by_ops = tally([row for row in rows if row["n_relevant_ops"] != ""],
                    lambda row: (row["model"], row["block"], row["n_relevant_ops"]))
     ops_rows = sorted(accuracy_rows(by_ops, ["model", "block", "n_relevant_ops"]),
                       key=lambda row: (row["model"], row["block"], row["n_relevant_ops"]))
-    write_csv(args.out_dir / "accuracy_by_n_relevant_ops.csv", ops_rows)
+    write_csv(args.out_dir / "accuracy_by_n_relevant_ops.csv", ops_rows,
+              ["model", "block", "n_relevant_ops", *ACCURACY_COLUMNS])
     compliance = compliance_rows(rows)
-    write_csv(args.out_dir / "compliance.csv", compliance)
-    write_csv(args.out_dir / "accuracy_g_by_template.csv", g_template_rows(rows))
+    write_csv(args.out_dir / "compliance.csv", compliance, COMPLIANCE_COLUMNS)
+    write_csv(args.out_dir / "accuracy_g_by_template.csv", g_template_rows(rows), G_TEMPLATE_COLUMNS)
 
     if loaded[0][2]:
         print("SYNTHETIC outputs: these are not model results.")
