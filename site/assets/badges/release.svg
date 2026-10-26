@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="143" height="32" viewBox="0 0 143 32" role="img" aria-label="Stable release">
+  <title>Stable release</title>
+  <rect x="0.5" y="0.5" width="142" height="31" rx="7.5" fill="#F8FAFC" stroke="#D0D7DE"/>
+  <g transform="translate(10 6) scale(0.8333333333)" fill="none" stroke="#475569" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h8l10 10-7 7L3 10V4Z"/><circle cx="7.5" cy="8" r="1"/></g>
+  <text x="38" y="20.5" fill="#24292F" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="500">Stable release</text>
+</svg>

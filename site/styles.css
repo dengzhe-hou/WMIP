@@ -46,6 +46,8 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
 }
 .wordmark { font-weight: 600; letter-spacing: -.02em; }
 .site-header nav { display: flex; gap: 28px; font-size: var(--small); }
+.resource-link { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; white-space: nowrap; }
+.resource-link img { display: block; width: 18px; height: 18px; flex: none; }
 .site-header nav a:hover { color: var(--blue); }
 
 .button {
@@ -144,7 +146,7 @@ summary { cursor: pointer; }
 @media (max-width: 480px) {
   :root { --display: 40px; }
   .content-width { width: calc(100% - 40px); }
-  .site-header nav { gap: 20px; }
+  .site-header nav { gap: 12px; }
   .generator-section { padding-block: 20px 24px; }
   .playground { margin-top: 20px; }
   .game-card { padding: 16px 20px 20px; border-radius: 20px; }

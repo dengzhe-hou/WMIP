@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="183" height="32" viewBox="0 0 183 32" role="img" aria-label="Reproduction guide">
+  <title>Reproduction guide</title>
+  <rect x="0.5" y="0.5" width="182" height="31" rx="7.5" fill="#F8FAFC" stroke="#D0D7DE"/>
+  <g transform="translate(10 6) scale(0.8333333333)" fill="none" stroke="#475569" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5.3C9.1 3.6 6.1 3.3 3 4.5v15c3.1-1.2 6.1-.9 9 .8m0-15c2.9-1.7 5.9-2 9-.8v15c-3.1-1.2-6.1-.9-9 .8V5.3Z"/></g>
+  <text x="38" y="20.5" fill="#24292F" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="500">Reproduction guide</text>
+</svg>
