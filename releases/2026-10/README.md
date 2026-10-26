@@ -21,7 +21,7 @@ The paper refers to the blocks by name. This package uses the following codes in
 
 ## Get the release
 
-The fixed public version is [v2026.10.1](https://github.com/dengzhe-hou/WMIP/releases/tag/v2026.10.1). Its [release notes](RELEASE_NOTES.md) describe the reuse improvements; [CITATION.cff](../../CITATION.cff) provides the software citation.
+The fixed public software version is [v2026.10.2](https://github.com/dengzhe-hou/WMIP/releases/tag/v2026.10.2). Its [release notes](RELEASE_NOTES.md) describe the reuse improvements; [CITATION.cff](../../CITATION.cff) provides the software citation. The unchanged Hugging Face item banks remain pinned at `v2026.10.1`.
 
 For a GitHub clone, enter `releases/2026-10/`; it already contains the materials and you do not need either supplementary archive. All commands below run from this release directory.
 
@@ -38,7 +38,7 @@ If you obtained the two supplementary archives instead, extract both into the sa
 
 ```
 wmip.py                 reuse helper: item loading, callable evaluation, answer import and scoring
-examples/               minimal model-function adapter with a synthetic demo
+examples/               runnable local Qwen tutorial and minimal model-function adapter with a synthetic demo
 code/generator/          build_item_bank.py and three bank checks
 code/generator/ext/      blocks K and L: build_ext_bank.py, the generator modules and manifests it reads, five bank checks
 code/runner/             run_wmf_am_bank.py (OpenAI-compatible chat client), model list, smoke items,
@@ -65,6 +65,8 @@ The main evaluation has 15,120 response records (18 models, 840 requests each, n
 File and script names that contain `wmf_am` use the internal project name.
 
 ## Reuse with your model
+
+Start with the [complete local Qwen tutorial](examples/README.md) to install the inference dependencies, run three real CPU requests, resume and inspect scores. Its default model revision is pinned, and it needs no endpoint or API key. The three-item check verifies the workflow; CPU float32 inference differs from the paper's backend and does not reproduce its results.
 
 See the repository's [Evaluate your model](../../README.md#evaluate-your-model) for an OpenAI-compatible endpoint command and the [minimal callable example](examples/evaluate_callable.py) for your own Python inference function. The runner saves raw responses, resumes unfinished requests, and respects each item's optional `system` message and `max_tokens` budget. Do not replace the budget with a single value for all blocks: the main bank includes 16-, 48- and 512-token items.
 
@@ -117,7 +119,7 @@ For the large-budget condition, the public helper reports the one-integer rule; 
 
 The checks below were run with Python 3.13.12, numpy 2.4.3, scipy 1.17.1 and matplotlib 3.10.8.
 
-- The generators, runner, scorers, reuse helper and callable example use the Python standard library only. Loading from Hugging Face optionally needs `datasets`.
+- The generators, runner, scorers, reuse helper and callable example use the Python standard library only. The [local model tutorial](examples/README.md) additionally needs PyTorch and Transformers; loading dataset rows from Hugging Face optionally needs `datasets`.
 - The analyses need numpy and scipy.
 - The figures need matplotlib and the Arial font. With other versions or another font the figures may differ in their bytes.
 

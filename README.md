@@ -2,18 +2,20 @@
 
 Evaluation materials for **A Working-Memory-Inspired Programmable Probe of Cumulative State Tracking in Large Language Models**.
 
-[Project website](https://dengzhe-hou.github.io/WMIP/) · [Hugging Face dataset](https://huggingface.co/datasets/dengzhe-hou/WMIP) · [Stable release](https://github.com/dengzhe-hou/WMIP/releases/tag/v2026.10.1) · [Reproduction guide](releases/2026-10/README.md)
+[Project website](https://dengzhe-hou.github.io/WMIP/) · [Hugging Face dataset](https://huggingface.co/datasets/dengzhe-hou/WMIP) · [Stable release](https://github.com/dengzhe-hou/WMIP/releases/tag/v2026.10.2) · [Reproduction guide](releases/2026-10/README.md)
 
 The current October 2026 release is in [`releases/2026-10/`](releases/2026-10/). It contains the generator, frozen item banks, model responses, execution metadata, scoring and analysis code, and generated tables and figures for the 18-model evaluation. Each model has 840 main-bank requests, 60 large-budget requests, and 180 intermediate-state and multi-target requests.
 
 ## Evaluate your model
 
-Clone the stable `v2026.10.1` release and enter its evaluation directory. A clone already contains the reproduction materials; supplementary archives are not needed. See the [release notes](releases/2026-10/RELEASE_NOTES.md) for changes in this version.
+Clone the stable `v2026.10.2` release and enter its evaluation directory. A clone already contains the reproduction materials; supplementary archives are not needed. See the [release notes](releases/2026-10/RELEASE_NOTES.md) for changes in this version.
 
 ```bash
-git clone --branch v2026.10.1 https://github.com/dengzhe-hou/WMIP.git
+git clone --branch v2026.10.2 https://github.com/dengzhe-hou/WMIP.git
 cd WMIP/releases/2026-10
 ```
+
+For a complete first run with a real model, follow the [local Qwen tutorial](releases/2026-10/examples/README.md). It covers installation, three CPU inference requests, saved responses, resuming and reading scores, with a pinned model revision and no API service to configure. This checks the workflow on three items; it does not reproduce the paper's evaluation.
 
 Run the frozen 840-item bank against a local or hosted OpenAI-compatible chat endpoint, then score its responses. Both commands use the Python standard library only.
 
@@ -119,7 +121,7 @@ The [earlier README at commit `f50db70`](https://github.com/dengzhe-hou/WMIP/blo
 
 ## Citation
 
-Use [CITATION.cff](CITATION.cff), or GitHub's **Cite this repository** button, to cite software release `2026.10.1`. The citation identifies these versioned evaluation materials. Paper citations should use the matching manuscript version.
+Use [CITATION.cff](CITATION.cff), or GitHub's **Cite this repository** button, to cite software release `2026.10.2`. The citation identifies these versioned evaluation materials. Paper citations should use the matching manuscript version.
 
 ## Licenses
 

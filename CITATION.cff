@@ -16,10 +16,10 @@ authors:
     given-names: Fangzhou
   - family-names: Yamada
     given-names: Kazunori D
-version: 2026.10.1
+version: 2026.10.2
 date-released: "2026-10-26"
 repository-code: "https://github.com/dengzhe-hou/WMIP"
-url: "https://github.com/dengzhe-hou/WMIP/releases/tag/v2026.10.1"
+url: "https://github.com/dengzhe-hou/WMIP/releases/tag/v2026.10.2"
 abstract: >-
   Evaluation materials for a programmable probe of cumulative state tracking
   in large language models, including generators, item banks, model responses,

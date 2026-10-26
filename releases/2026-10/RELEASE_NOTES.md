@@ -1,4 +1,18 @@
-# WMIP v2026.10.1
+# WMIP v2026.10.2
+
+Released on 2026-10-26. This version adds a complete local Transformers
+example for the existing model-function interface. It loads a pinned
+Qwen3 4B Instruct model on CPU, writes real responses, resumes completed
+items and scores against the frozen bank. The [walkthrough](examples/README.md)
+covers installation, a three-item connection check, resuming and a full run.
+
+The connection check is an onboarding example. Its CPU float32 backend
+differs from the released paper runs and its scores are not a reproduction
+of the reported model results. Frozen item banks, stored model responses,
+scoring rules and reported results are unchanged. The matching frozen
+Hugging Face banks remain at dataset tag `v2026.10.1`.
+
+## WMIP v2026.10.1
 
 Released on 2026-10-26. The current evaluation materials are in
 [`releases/2026-10/`](./). The repository's root `code/` and `data/` directories
