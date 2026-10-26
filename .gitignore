@@ -56,6 +56,6 @@ croissant.json
 /.aris/
 /.claude/
 /.pytest_cache/
-/ARR_REVIEW_*.md
+/*_REVIEW_*.md
 /rebuttal/
 /LOCAL_PROJECT_MAP.md
