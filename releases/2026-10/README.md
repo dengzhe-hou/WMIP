@@ -90,7 +90,23 @@ Each answer needs `item_id` and `response`; optional `finish_reason` reports tru
 
 Use unchanged IDs from the selected bank and preserve the model's full response. Missing or failed answers are reported separately; accuracy uses answered items, so report the scored and missing counts with it. `my-scores/responses.jsonl` holds the converted records; `scored_items.csv` and the summary CSVs are produced by the same scorer as the released model responses.
 
-The terminal summary displays each task's name, scored/total count, missing count, accuracy and truncation count. E/F show Parser 1 and Parser 2 separately; the other tasks use their existing specified rule. An all-missing task shows `-` for accuracy. Individual task subsets, including Written steps alone, are supported. See the [output preview](../../README.md#read-the-results) for a real released model; the CSV schemas and scoring rules remain unchanged.
+The terminal summary displays each task's name, scored/total count, missing count, accuracy and truncation count. E/F show Parser 1 and Parser 2 separately; the other tasks use their existing specified rule. An all-missing task shows `-` for accuracy. Individual task subsets, including Written steps alone, are supported. For example, rescoring the stored Qwen3 4B responses prints the following, with no new model calls:
+
+```text
+model: qwen3-4b-instruct-2507
+Task                      Scored/total Missing  Accuracy  Parser 1  Parser 2 Truncated
+A Core                           60/60       0      1.7%         -         -        40
+B Depth                        140/140       0      0.0%         -         -        32
+C Arithmetic                     90/90       0     93.3%         -         -         0
+D Cancellation                 100/100       0     55.0%         -         -        29
+E Assignment                     90/90       0         -     96.7%     96.7%         0
+F Sets/counts                    90/90       0         -     54.4%     54.4%         5
+G Wordings                     150/150       0     14.7%         -         -       111
+H Instructions                   60/60       0      0.0%         -         -        31
+I Written steps                  60/60       0    100.0%         -         -         0
+```
+
+The CSV schemas and scoring rules are unchanged.
 
 Core/Depth integer items use exactly-one-integer scoring; Written steps uses the documented last-integer rule. E/F retain both documented parsers. Read the block-specific columns rather than treating all answer types as string equality. Match the released prompts, budgets and thinking-disabled inference mode when comparing with released results, and describe any departures.
 
