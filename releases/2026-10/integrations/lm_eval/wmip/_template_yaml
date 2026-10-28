@@ -1,0 +1,21 @@
+# Shared settings for the WMIP tasks. Prompts, budgets and scoring rules match
+# the released runner and scorers; see integrations/README.md.
+dataset_path: dengzhe-hou/WMIP
+dataset_kwargs:
+  revision: v2026.10.1
+test_split: test
+output_type: generate_until
+doc_to_text: "{{prompt}}"
+doc_to_target: "{{gold_json}}"
+num_fewshot: 0
+generation_kwargs:
+  until: []
+  do_sample: false
+  temperature: 0.0
+process_results: !function utils.score_one_integer
+metric_list:
+  - metric: acc
+    aggregation: mean
+    higher_is_better: true
+metadata:
+  version: 2026.10

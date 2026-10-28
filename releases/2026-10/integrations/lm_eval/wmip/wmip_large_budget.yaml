@@ -1,0 +1,17 @@
+include: _template_yaml
+task: wmip_large_budget
+dataset_name: large_budget_2026_10
+process_docs: !function utils.large_budget_docs
+process_results: !function utils.score_budget
+generation_kwargs:
+  until: []
+  do_sample: false
+  temperature: 0.0
+  max_gen_toks: 512
+metric_list:
+  - metric: acc_one_integer
+    aggregation: mean
+    higher_is_better: true
+  - metric: acc_last_integer
+    aggregation: mean
+    higher_is_better: true

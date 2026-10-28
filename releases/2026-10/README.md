@@ -21,7 +21,7 @@ The paper refers to the blocks by name. This package uses the following codes in
 
 ## Get the release
 
-The fixed public software version is [v2026.10.2](https://github.com/dengzhe-hou/WMIP/releases/tag/v2026.10.2). Its [release notes](RELEASE_NOTES.md) describe the reuse improvements; [CITATION.cff](../../CITATION.cff) provides the software citation. The unchanged Hugging Face item banks remain pinned at `v2026.10.1`.
+The fixed public software version is [v2026.10.3](https://github.com/dengzhe-hou/WMIP/releases/tag/v2026.10.3). Its [release notes](RELEASE_NOTES.md) describe the reuse improvements; [CITATION.cff](../../CITATION.cff) provides the software citation. The unchanged Hugging Face item banks remain pinned at `v2026.10.1`.
 
 For a GitHub clone, enter `releases/2026-10/`; it already contains the materials and you do not need either supplementary archive. All commands below run from this release directory.
 
@@ -37,11 +37,14 @@ If you obtained the two supplementary archives instead, extract both into the sa
 ## Contents
 
 ```
-wmip.py                 reuse helper: item loading, callable evaluation, answer import and scoring
+wmip.py                 reuse helper: one-command run of all banks with comparison, item loading,
+                         callable evaluation, answer import and scoring
+integrations/           lm-evaluation-harness and Inspect task definitions
 examples/               runnable local Qwen tutorial and minimal model-function adapter with a synthetic demo
 code/generator/          build_item_bank.py and three bank checks
 code/generator/ext/      blocks K and L: build_ext_bank.py, the generator modules and manifests it reads, five bank checks
-code/runner/             run_wmf_am_bank.py (OpenAI-compatible chat client), model list, smoke items,
+code/runner/             run_bank.py and run_wmf_am_bank.py (the same OpenAI-compatible chat client under its
+                         current and released names), model list, smoke items,
                          local serving scripts (as run on a SLURM cluster), API commands and identity check
 data/item_bank/          item_bank.jsonl, the bank of 840 requests per model, and the build log;
                          three bank files for blocks K and L (180 requests per model)
@@ -68,7 +71,7 @@ File and script names that contain `wmf_am` use the internal project name.
 
 Start with the [complete local Qwen tutorial](examples/README.md) to install the inference dependencies, run three real CPU requests, resume and inspect scores. Its default model revision is pinned, and it needs no endpoint or API key. The three-item check verifies the workflow; CPU float32 inference differs from the paper's backend and does not reproduce its results.
 
-See the repository's [Evaluate your model](../../README.md#evaluate-your-model) for an OpenAI-compatible endpoint command and the [minimal callable example](examples/evaluate_callable.py) for your own Python inference function. The runner saves raw responses, resumes unfinished requests, and respects each item's optional `system` message and `max_tokens` budget. Do not replace the budget with a single value for all blocks: the main bank includes 16-, 48- and 512-token items.
+To evaluate a model served through an OpenAI-compatible endpoint on all three banks and compare it with the 18 published models, run `python wmip.py run --base-url <url> --model <name> --out-dir my-run`; the repository's [Evaluate your model](../../README.md#evaluate-your-model) explains its options and how to turn thinking off. [Framework tasks](integrations/README.md) cover lm-evaluation-harness and Inspect. See the [minimal callable example](examples/evaluate_callable.py) for your own Python inference function. The runner saves raw responses, resumes unfinished requests, and respects each item's optional `system` message and `max_tokens` budget. Do not replace the budget with a single value for all blocks: the main bank includes 16-, 48- and 512-token items.
 
 The callable example also resumes when rerun with the same output directory. It appends responses, skips existing successful records and retries failed or unfinished items. Empty, incorrect and truncated responses remain completed items. Changing the model or inference settings requires a new output directory. Saved records are checked against their current bank items before new calls.
 

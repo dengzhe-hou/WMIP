@@ -1,4 +1,24 @@
-# WMIP v2026.10.2
+# WMIP v2026.10.3
+
+Released on 2026-10-28. This version makes it easier to evaluate a new model
+and place it among the published ones.
+
+- `python wmip.py run` sends the three frozen banks (840 main, 60 large-budget,
+  180 intermediate-state and multi-target items) to one OpenAI-compatible
+  endpoint, scores each with its published rule and prints the model among the
+  18 published models. `python wmip.py compare` reprints the table.
+- lm-evaluation-harness and Inspect task definitions in `integrations/` use
+  the frozen banks and the release's own scorers.
+- The repository README shows how to turn thinking off for common model and
+  server types.
+- `code/runner/run_bank.py` is the released runner under its current name; the
+  original `run_wmf_am_bank.py` remains and runs the same code.
+
+Frozen item banks, stored model responses, scoring rules and reported results
+are unchanged. The matching frozen Hugging Face banks remain at dataset tag
+`v2026.10.1`.
+
+## WMIP v2026.10.2
 
 Released on 2026-10-26. This version adds a complete local Transformers
 example for the existing model-function interface. It loads a pinned

@@ -1,0 +1,10 @@
+include: _template_yaml
+task: wmip_multitarget_readout
+dataset_name: intermediate_multitarget_2026_10
+process_docs: !function utils.multitarget_readout_docs
+process_results: !function utils.score_extension
+generation_kwargs:
+  until: []
+  do_sample: false
+  temperature: 0.0
+  max_gen_toks: 48

@@ -4,7 +4,7 @@
 
 **A Working-Memory-Inspired Programmable Probe of Cumulative State Tracking in Large Language Models**
 
-[![Project website](site/assets/badges/project.svg)](https://dengzhe-hou.github.io/WMIP/) [![Hugging Face dataset](site/assets/badges/huggingface.svg)](https://huggingface.co/datasets/dengzhe-hou/WMIP) [![Stable release](site/assets/badges/release.svg)](https://github.com/dengzhe-hou/WMIP/releases/tag/v2026.10.2) [![Reproduction guide](site/assets/badges/docs.svg)](releases/2026-10/README.md)
+[![Project website](site/assets/badges/project.svg)](https://dengzhe-hou.github.io/WMIP/) [![Hugging Face dataset](site/assets/badges/huggingface.svg)](https://huggingface.co/datasets/dengzhe-hou/WMIP) [![Stable release](site/assets/badges/release.svg)](https://github.com/dengzhe-hou/WMIP/releases/tag/v2026.10.3) [![Reproduction guide](site/assets/badges/docs.svg)](releases/2026-10/README.md)
 
 </div>
 
@@ -17,6 +17,7 @@ The current October 2026 release is in [`releases/2026-10/`](releases/2026-10/).
 
 ## News
 
+- **2026-10-28** Release [v2026.10.3](https://github.com/dengzhe-hou/WMIP/releases/tag/v2026.10.3) runs every frozen bank with one command and compares your model with the 18 published models. It also adds lm-evaluation-harness and Inspect tasks.
 - **2026-10-26** Release [v2026.10.2](https://github.com/dengzhe-hou/WMIP/releases/tag/v2026.10.2) adds a [local Qwen tutorial](releases/2026-10/examples/README.md) that runs a real model on CPU.
 - **2026-10-26** Release [v2026.10.1](https://github.com/dengzhe-hou/WMIP/releases/tag/v2026.10.1) adds evaluation through a Python function or an existing answer file, resumable runs and per-task score summaries.
 - **2026-10-19** The item banks are on [Hugging Face](https://huggingface.co/datasets/dengzhe-hou/WMIP), and the [project website](https://dengzhe-hou.github.io/WMIP/) lets you play the task and generate new items.
@@ -39,38 +40,59 @@ Across 18 models, accuracy is 84.9% on single-step arithmetic but 31.7% on core 
 | Full reproduction guide | [Release README](releases/2026-10/README.md) |
 | First run with a real model | [Local Qwen tutorial](releases/2026-10/examples/README.md) |
 | Your own inference code | [Minimal Python example](releases/2026-10/examples/evaluate_callable.py) |
+| lm-evaluation-harness and Inspect | [Framework tasks](releases/2026-10/integrations/README.md) |
 | Changes by version | [Release notes](releases/2026-10/RELEASE_NOTES.md) |
 
 ## Evaluate your model
 
-Clone the stable `v2026.10.2` release and enter its evaluation directory. A clone already contains the reproduction materials; supplementary archives are not needed. See the [release notes](releases/2026-10/RELEASE_NOTES.md) for changes in this version.
+Clone the stable `v2026.10.3` release and enter its evaluation directory. A clone already contains the reproduction materials; supplementary archives are not needed. See the [release notes](releases/2026-10/RELEASE_NOTES.md) for changes in this version.
 
 ```bash
-git clone --branch v2026.10.2 https://github.com/dengzhe-hou/WMIP.git
+git clone --branch v2026.10.3 https://github.com/dengzhe-hou/WMIP.git
 cd WMIP/releases/2026-10
 ```
 
-For a complete first run with a real model, follow the [local Qwen tutorial](releases/2026-10/examples/README.md). It covers installation, three CPU inference requests, saved responses, resuming and reading scores, with a pinned model revision and no API service to configure. This checks the workflow on three items; it does not reproduce the paper's evaluation.
-
-Run the frozen 840-item bank against a local or hosted OpenAI-compatible chat endpoint, then score its responses. Both commands use the Python standard library only.
+One command sends all three frozen banks (840 main, 60 large-budget and 180 intermediate-state and multi-target items) to a local or hosted OpenAI-compatible chat endpoint, scores them with the published rules, and prints your model among the 18 published models. It uses the Python standard library only.
 
 ```bash
-python code/runner/run_wmf_am_bank.py \
-    --bank data/item_bank/item_bank.jsonl \
-    --base-url http://localhost:8000/v1 --model my-model --label my-model \
-    --out my-run/responses.jsonl
-python analysis/score_bank.py --bank data/item_bank/item_bank.jsonl \
-    --out-dir my-run/scores my-run/responses.jsonl
+python wmip.py run --base-url http://localhost:8000/v1 --model my-model --out-dir my-run
 ```
 
-Replace the URL and model name with your endpoint's values. For an authenticated endpoint, set its key in an environment variable and add `--api-key-env WMIP_API_KEY`. Running the first command makes model requests; rerunning the same command resumes unfinished items.
+For an authenticated endpoint, set its key in an environment variable and add `--api-key-env WMIP_API_KEY`. Add `--concurrency 8` to send requests in parallel. Rerunning the same command resumes unfinished requests and reprints the table; `python wmip.py compare --run-dir my-run` reprints it without any request. The table and `my-run/comparison.csv` cover Core, single-step arithmetic, cancellation, written steps, the large budget, intermediate states, and multi-target tracking and readout, each scored by its own rule and never pooled. Full diagnostics are in `my-run/scores/`.
 
-The runner preserves each item's prompt, optional system message and `max_tokens` budget, including 512 tokens for Written steps.
+The runner preserves each item's prompt, optional system message and `max_tokens` budget, including 512 tokens for Written steps and the large budget.
 
 > [!IMPORTANT]
-> To compare with the published results, match the release's thinking-disabled inference mode. Record any changes to prompts, budgets or inference settings.
+> The published results use thinking-disabled inference. The run stops if a response contains a reasoning trace. Turn thinking off as below, and record any changes to prompts, budgets or inference settings.
 
-Scores are written by block in `my-run/scores/accuracy_by_block.csv`, with item-level scores and format diagnostics alongside it.
+### Turn thinking off
+
+How to disable reasoning depends on the model and server. Pass the setting with `--extra-body`, a JSON object merged into every request.
+
+| Model and endpoint | Add to the command |
+| --- | --- |
+| Instruct models without a reasoning mode, e.g. Llama 3, Falcon3, Qwen3-4B-Instruct-2507 | nothing |
+| Hybrid-reasoning models on vLLM or SGLang whose chat template reads `enable_thinking`, e.g. Qwen3 | `--extra-body '{"chat_template_kwargs": {"enable_thinking": false}}'` |
+| OpenAI reasoning models that accept effort `none`, e.g. GPT-5.2 | `--temperature none --extra-body '{"reasoning_effort": "none"}'` |
+| The same models through OpenRouter, as in the paper | `--temperature none --extra-body '{"reasoning": {"effort": "none"}}'` |
+| Claude through Anthropic's OpenAI-compatible endpoint | nothing; extended thinking is off unless requested |
+
+Other models use other switches; check the model card. If the run stops with a reasoning-trace message, the setting did not take effect. Use a new `--out-dir` after changing settings.
+
+### Run one bank, or use your own code
+
+To run a single bank, use `--banks main` (or `budget`, `ext`), or call the runner directly and score its output:
+
+```bash
+python code/runner/run_bank.py --bank data/item_bank/item_bank.jsonl \
+    --base-url http://localhost:8000/v1 --model my-model --out my-run/main.jsonl
+python analysis/score_bank.py --bank data/item_bank/item_bank.jsonl \
+    --out-dir my-run/scores my-run/main.jsonl
+```
+
+`run_bank.py` is the released runner `run_wmf_am_bank.py` under its current name; both run the same code. Scores are written by block in `my-run/scores/accuracy_by_block.csv`, with item-level scores and format diagnostics alongside it.
+
+For a complete first run with a model on your own machine, follow the [local Qwen tutorial](releases/2026-10/examples/README.md). It covers installation, three CPU inference requests, saved responses, resuming and reading scores, with a pinned model revision and no API service to configure. This checks the workflow on three items; it does not reproduce the paper's evaluation.
 
 For your own inference code, edit `generate(item)` in the [minimal Python example](releases/2026-10/examples/evaluate_callable.py). It receives the full item, so send only the prompt and optional system message to your model, and respect `max_tokens`. The example saves responses and invokes the same scorer. After editing the function, run:
 
@@ -87,6 +109,19 @@ python examples/evaluate_callable.py --demo --out-dir my-demo
 ```
 
 The demo produces explicitly synthetic outputs and is not a model evaluation.
+
+### lm-evaluation-harness and Inspect
+
+The same tasks are available for [lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness) and [Inspect](https://inspect.aisi.org.uk). Both load the frozen banks and score with the release's own scorers. They reproduce a released model's published accuracies exactly when given its stored responses.
+
+```bash
+lm_eval --model local-chat-completions \
+    --model_args model=my-model,base_url=http://localhost:8000/v1/chat/completions,tokenizer_backend=None \
+    --tasks wmip --include_path integrations/lm_eval/wmip --apply_chat_template
+inspect eval integrations/inspect/wmip_inspect.py@wmip -T task=core --model openai/gpt-4.1
+```
+
+See [`integrations/README.md`](releases/2026-10/integrations/README.md) for the task list, what each framework covers, and how their results relate to the published table.
 
 ## Score your own answers
 
@@ -162,7 +197,7 @@ The [earlier README at commit `f50db70`](https://github.com/dengzhe-hou/WMIP/blo
 
 ## Citation
 
-Use [CITATION.cff](CITATION.cff), or GitHub's **Cite this repository** button, to cite software release `2026.10.2`. The citation identifies these versioned evaluation materials. Paper citations should use the matching manuscript version.
+Use [CITATION.cff](CITATION.cff), or GitHub's **Cite this repository** button, to cite software release `2026.10.3`. The citation identifies these versioned evaluation materials. Paper citations should use the matching manuscript version.
 
 ## Licenses
 

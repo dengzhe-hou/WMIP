@@ -1,6 +1,6 @@
 # Run a real model locally
 
-Run these commands from `releases/2026-10/` in the [v2026.10.2 clone](../../../README.md#evaluate-your-model). This example uses Qwen/Qwen3-4B-Instruct-2507 at revision `cdbee75f17c01a7cc42f958dc650907174af0554`, with CPU float32 and four threads.
+Run these commands from `releases/2026-10/` in the [v2026.10.3 clone](../../../README.md#evaluate-your-model). This example uses Qwen/Qwen3-4B-Instruct-2507 at revision `cdbee75f17c01a7cc42f958dc650907174af0554`, with CPU float32 and four threads.
 
 ## Install
 

@@ -1,0 +1,17 @@
+include: _template_yaml
+task: wmip_assignment
+dataset_name: main_2026_10
+process_docs: !function utils.assignment_docs
+process_results: !function utils.score_two_parsers
+generation_kwargs:
+  until: []
+  do_sample: false
+  temperature: 0.0
+  max_gen_toks: 16
+metric_list:
+  - metric: acc_parser1
+    aggregation: mean
+    higher_is_better: true
+  - metric: acc_parser2
+    aggregation: mean
+    higher_is_better: true

@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
-"""Use a WMIP bank with your own inference function or response JSONL.
+"""Evaluate a model on WMIP and compare it with the 18 published models.
 
+``python wmip.py run`` sends every frozen bank to an OpenAI-compatible endpoint,
+scores the responses with the published rules and prints a comparison table.
+The same module also scores your own inference function or response JSONL.
 No model dependencies are required. Scoring delegates to the release's main
 or K/L extension scorer.
 All prompts, system turns and item-specific output budgets come from the bank;
@@ -11,7 +14,10 @@ which inference settings produced it.
 from __future__ import annotations
 
 import argparse
+import contextlib
+import csv
 import importlib.util
+import io
 import json
 import subprocess
 import sys
@@ -262,16 +268,217 @@ def _scoring_family(items: list[dict[str, Any]]) -> bool:
     return False
 
 
+# ── Full evaluation and comparison with the published panel ──────────────────
+
+# The three frozen banks of the paper, in run order.
+BANKS = {
+    "main": HERE / "data/item_bank/item_bank.jsonl",      # 840 items, blocks A-I
+    "budget": HERE / "data/item_bank/budget_bank.jsonl",  # 60 core items at 512 tokens
+    "ext": HERE / "data/item_bank/ext_bank.jsonl",        # 180 intermediate-state and multi-target items
+}
+# Comparison columns: (key, heading, bank, rule).
+METRICS = [
+    ("core", "Core", "main", "A, one integer, 16 tokens"),
+    ("arithmetic", "Arith.", "main", "C, single-step arithmetic"),
+    ("cancellation", "Cancel.", "main", "D, updates with no net change"),
+    ("written_steps", "Steps", "main", "I, written steps, last integer, 512 tokens"),
+    ("budget_last", "Budget", "budget", "core prompt, 512 tokens, last integer"),
+    ("intermediate", "Interm.", "ext", "K, earlier state, one integer"),
+    ("tracking", "Track", "ext", "L, M targets tracked, exact ordered list"),
+    ("readout", "Readout", "ext", "L, readout control, exact ordered list"),
+]
+
+
+def run(base_url: str, model: str, out_dir: str | Path, *, label: str | None = None,
+        banks: Iterable[str] = BANKS, runner_args: Iterable[str] = ()) -> int:
+    """Query one OpenAI-compatible endpoint on every frozen bank, then compare.
+
+    Each bank goes through the released runner with its own output file, so a
+    rerun of the same command resumes unfinished requests. ``runner_args`` are
+    passed through (``--api-key-env``, ``--extra-body``, ``--concurrency`` ...).
+    Returns the runner's worst exit code: 0 complete, 1 items missing, 2 aborted.
+    """
+    out_dir = Path(out_dir)
+    label = label or model
+    worst = 0
+    for name in banks:
+        print(f"\n== {name} bank ({BANKS[name].name}) ==")
+        code = _runner.main(["--bank", str(BANKS[name]), "--out", str(out_dir / f"{name}.jsonl"),
+                             "--base-url", base_url, "--model", model, "--label", label,
+                             *runner_args])
+        worst = max(worst, code)
+        if code == 2:
+            print(f"Stopped at the {name} bank; fix the reported problem and rerun the same command.")
+            return code
+    compare(out_dir)
+    return worst
+
+
+def _ratio(correct: int, scored: int) -> float | None:
+    return correct / scored if scored else None
+
+
+def _your_scores(run_dir: Path) -> tuple[str, dict[str, float | None], dict[str, str]]:
+    """Score the run's response files with the published rules for each bank."""
+    scores: dict[str, float | None] = {}
+    coverage: dict[str, str] = {}
+    labels = set()
+    main_file = run_dir / "main.jsonl"
+    if main_file.exists():
+        with contextlib.redirect_stdout(io.StringIO()):
+            _scorer.main(["--bank", str(BANKS["main"]), "--out-dir", str(run_dir / "scores/main"),
+                          str(main_file)])
+        (label, blocks), = _by_model(run_dir / "scores/main/accuracy_by_block.csv").items()
+        labels.add(label)
+        for key, block in (("core", "A"), ("arithmetic", "C"), ("cancellation", "D"),
+                           ("written_steps", "I")):
+            row = blocks[block]
+            scores[key] = _ratio(int(row["n_correct_strict"]), int(row["n_scored"]))
+            coverage[key] = f"{row['n_scored']}/{row['n_items']}"
+    budget_file = run_dir / "budget.jsonl"
+    if budget_file.exists():
+        bank = {item["item_id"]: item for item in _scorer.load_bank(BANKS["budget"])}
+        label, final, _ = _scorer.load_output(budget_file, bank)
+        labels.add(label)
+        correct = sum(_scorer.strict_int_last(record["raw_response"], bank[item_id]["gold"])
+                      for item_id, record in final.items())
+        scores["budget_last"] = _ratio(correct, len(final))
+        coverage["budget_last"] = f"{len(final)}/{len(bank)}"
+    ext_file = run_dir / "ext.jsonl"
+    if ext_file.exists():
+        subprocess.run([sys.executable, str(HERE / "analysis/score_ext.py"), "--bank", str(BANKS["ext"]),
+                        "--out-dir", str(run_dir / "scores/ext"), str(ext_file)],
+                       check=True, stdout=subprocess.DEVNULL)
+        with (run_dir / "scores/ext/scored_items.csv").open(encoding="utf-8") as handle:
+            rows = list(csv.DictReader(handle))
+        labels.update(row["model"] for row in rows)
+        for key, keep in (("intermediate", lambda r: r["block"] == "K"),
+                          ("tracking", lambda r: r["condition"] == "tracking"),
+                          ("readout", lambda r: r["condition"] == "readout")):
+            cell = [r for r in rows if keep(r)]
+            answered = [r for r in cell if r["status"] == "answered"]
+            scores[key] = _ratio(sum(int(r["correct"]) for r in answered), len(answered))
+            coverage[key] = f"{len(answered)}/{len(cell)}"
+    if not scores:
+        raise ValueError(f"{run_dir}: no main.jsonl, budget.jsonl or ext.jsonl to compare")
+    if len(labels) != 1:
+        raise ValueError(f"{run_dir}: response files carry different labels: {sorted(labels)}")
+    return labels.pop(), scores, coverage
+
+
+def _by_model(path: Path) -> dict[str, dict[str, dict[str, str]]]:
+    table: dict[str, dict[str, dict[str, str]]] = {}
+    with path.open(encoding="utf-8") as handle:
+        for row in csv.DictReader(handle):
+            table.setdefault(row["model"], {})[row["block"]] = row
+    return table
+
+
+def published_scores() -> dict[str, dict[str, float]]:
+    """Per-model accuracies of the 18 published models, from the stored results."""
+    names = {}
+    with (HERE / "analysis/results/BFCL_INPUTS_20261004.csv").open(encoding="utf-8") as handle:
+        for row in csv.DictReader(handle):
+            names[row["run_label"]] = row["model"].replace("-Instruct", "").replace("-350m", "-350M")
+    table = {names[model]: {} for model in names}
+    for model, blocks in _by_model(HERE / "data/scored/accuracy_by_block.csv").items():
+        for key, block in (("core", "A"), ("arithmetic", "C"), ("cancellation", "D"),
+                           ("written_steps", "I")):
+            table[names[model]][key] = int(blocks[block]["n_correct_strict"]) / int(blocks[block]["n_scored"])
+    with (HERE / "analysis/results/budget/by_model.csv").open(encoding="utf-8") as handle:
+        for row in csv.DictReader(handle):
+            table[names[row["model"]]]["budget_last"] = int(row["A512_last"]) / 60
+    with (HERE / "analysis/results/ext/accuracy_by_model.csv").open(encoding="utf-8") as handle:
+        for row in csv.DictReader(handle):
+            def total(columns: list[str]) -> float:
+                parts = [row[column].split("/") for column in columns]
+                return sum(int(a) for a, _ in parts) / sum(int(b) for _, b in parts)
+            entry = table[names[row["model"]]]
+            entry["intermediate"] = total(["K_q1", "K_q2", "K_q3"])
+            entry["tracking"] = total([f"L_M{m}_tracking" for m in (1, 2, 4)])
+            entry["readout"] = total([f"L_M{m}_readout" for m in (1, 2, 4)])
+    return table
+
+
+def compare(run_dir: str | Path) -> Path:
+    """Print your model among the 18 published models and write comparison.csv."""
+    run_dir = Path(run_dir)
+    label, mine, coverage = _your_scores(run_dir)
+    panel = published_scores()
+    if label in panel:
+        raise ValueError(f"label {label!r} equals a published model name; rerun with another --label")
+    rows = sorted([(name, values, False) for name, values in panel.items()] + [(label, mine, True)],
+                  key=lambda row: -(row[1].get("core") if row[1].get("core") is not None else -1))
+    columns = [metric for metric in METRICS if metric[0] in mine]
+
+    def cell(value: float | None) -> str:
+        return "-" if value is None else f"{100 * value:.1f}"
+
+    print("\nAccuracy (%) with the published scoring rules. Rows are sorted by Core.")
+    print(f"{'':2s}{'Model':24s}" + "".join(f"{heading:>9s}" for _, heading, _, _ in columns))
+    for name, values, yours in rows:
+        print(f"{'>' if yours else '':2s}{name[:24]:24s}"
+              + "".join(f"{cell(values.get(key)):>9s}" for key, _, _, _ in columns))
+    if "core" in mine and mine["core"] is not None:
+        rank = 1 + sum(values["core"] > mine["core"] for values in panel.values())
+        print(f"\n{label}: Core rank {rank} of {len(panel) + 1}.")
+    incomplete = {key: cover for key, cover in coverage.items()
+                  if cover.split("/")[0] != cover.split("/")[1]}
+    if incomplete:
+        print("Incomplete coverage (scored/total), excluded from accuracy: "
+              + ", ".join(f"{key} {cover}" for key, cover in incomplete.items())
+              + ". Rerun the same command to retry missing requests.")
+    print("Columns: " + "; ".join(f"{heading} = {rule}" for _, heading, _, rule in columns) + ".")
+    path = run_dir / "comparison.csv"
+    with path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.writer(handle)
+        writer.writerow(["model", "yours", *[key for key, _, _, _ in columns]])
+        for name, values, yours in rows:
+            writer.writerow([name, int(yours), *[blank_ratio(values.get(key)) for key, _, _, _ in columns]])
+    print(f"written to {path}")
+    return path
+
+
+def blank_ratio(value: float | None) -> str:
+    return "" if value is None else f"{value:.6f}"
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     subparsers = parser.add_subparsers(dest="command", required=True)
+    running = subparsers.add_parser(
+        "run", help="Run all frozen banks on an OpenAI-compatible endpoint and compare",
+        description="Run the main, large-budget and extension banks on one endpoint, score them "
+                    "with the published rules and print your model among the 18 published models. "
+                    "Other runner options (--api-key-env, --extra-body, --temperature, "
+                    "--concurrency, --timeout ...) are passed through.")
+    running.add_argument("--base-url", required=True)
+    running.add_argument("--model", required=True)
+    running.add_argument("--label", help="name for your model (default: --model)")
+    running.add_argument("--out-dir", type=Path, required=True)
+    running.add_argument("--banks", default="main,budget,ext",
+                         help="comma-separated subset of main,budget,ext")
+    comparing = subparsers.add_parser("compare", help="Reprint the comparison for a finished run")
+    comparing.add_argument("--run-dir", type=Path, required=True)
     scoring = subparsers.add_parser("score", help="Score your item_id + response JSONL")
     scoring.add_argument("--bank", type=Path, required=True)
     scoring.add_argument("--responses", type=Path, required=True)
     scoring.add_argument("--label", required=True)
     scoring.add_argument("--out-dir", type=Path, required=True)
     scoring.add_argument("--synthetic", action="store_true", help="mark mock data, not model results")
-    args = parser.parse_args()
+    args, passthrough = parser.parse_known_args()
+    if args.command == "run":
+        banks = [name.strip() for name in args.banks.split(",") if name.strip()]
+        unknown = set(banks) - set(BANKS)
+        if unknown or not banks:
+            parser.error(f"--banks must name main, budget or ext; got {args.banks!r}")
+        return run(args.base_url, args.model, args.out_dir, label=args.label, banks=banks,
+                   runner_args=passthrough)
+    if passthrough:
+        parser.error(f"unrecognized arguments: {' '.join(passthrough)}")
+    if args.command == "compare":
+        compare(args.run_dir)
+        return 0
     items = load_items(args.bank)
     _scoring_family(items)
     records = import_responses(items, args.responses, args.out_dir / "responses.jsonl", args.label,

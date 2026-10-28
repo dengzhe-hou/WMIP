@@ -1,0 +1,18 @@
+group: wmip
+task:
+  - wmip_core
+  - wmip_depth
+  - wmip_arithmetic
+  - wmip_cancellation
+  - wmip_assignment
+  - wmip_sets_counts_16
+  - wmip_sets_counts_48
+  - wmip_wordings
+  - wmip_written_steps
+  - wmip_large_budget
+  - wmip_intermediate
+  - wmip_multitarget_tracking
+  - wmip_multitarget_readout
+# No aggregate score: the paper reports each task separately and never pools them.
+metadata:
+  version: 2026.10

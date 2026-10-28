@@ -1,0 +1,10 @@
+include: _template_yaml
+task: wmip_depth
+dataset_name: main_2026_10
+process_docs: !function utils.depth_docs
+process_results: !function utils.score_one_integer
+generation_kwargs:
+  until: []
+  do_sample: false
+  temperature: 0.0
+  max_gen_toks: 16
