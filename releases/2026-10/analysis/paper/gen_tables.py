@@ -166,7 +166,7 @@ def main():
             label = r"\midrule " + label
         records = [pi[rule, block, domain, "ALL"] for rule in ("submitted", "candidate")]
         rows.append([label] + [f"{r['correct']} ({100*float(r['accuracy']):.1f}\\%)" for r in records])
-    table("ef_domains.tex", "tab:ef-domain-summary", r"Correct counts and accuracy ($\uparrow$) by non-arithmetic domain. Each row pools 540 responses to 30 items shared by all 18 models. Both rules score the same responses, with neither chosen as the main rule.", ["Domain", "Parser 1", "Parser 2"], rows, spec="@{}lrr@{}", wide=False, placement="!b")
+    table("ef_domains.tex", "tab:ef-domain-summary", r"Correct counts and accuracy ($\uparrow$) by task domain. Each row pools 540 responses to 30 items shared by all 18 models. Both rules score the same responses, with neither chosen as the main rule.", ["Domain", "Parser 1", "Parser 2"], rows, spec="@{}lrr@{}", wide=False, placement="!b")
 
     conditions = read("protocol_conditions.csv")
     pairs = read("protocol_pair_summary.csv")
@@ -229,10 +229,16 @@ def main():
                    "H": "Instructions", "I": "Written steps",
                    "H-A": r"\shortstack[l]{Instructions\\$-$ Core}",
                    "I-A": r"\shortstack[l]{Written steps\\$-$ Core}"})
-    panels = []
-    for title, idx, terms in [
-        (r"Paired Kendall $\tau_b$ differences", kidx, ("H-A", "I-A")),
-        (r"Pearson $r$ sensitivity", pidx, ("A", "C", "D", "A-C", "A-D")),
+    shared = (r"Pointwise 95\% percentile intervals use the same 10,000 paired model resamples as Table~\ref{tab:associations}. "
+              r"Differences are computed within each resample, and $u$ counts undefined resamples.")
+    floats = []
+    for idx, terms, caption, label in [
+        (kidx, ("H-A", "I-A"),
+         r"Paired differences in protocol Kendall $\tau_b$ with BFCL for all 18 models. Protocol coefficients and scoring rules are in Table~\ref{tab:protocol-associations}. Tied ceiling scores for Written steps leave some resamples undefined. Minus signs denote paired differences. " + shared,
+         "tab:protocol-differences"),
+        (pidx, ("A", "C", "D", "A-C", "A-D"),
+         r"Pearson $r$ sensitivity of BFCL associations for correct counts, all 18 models. Minus signs denote paired differences. " + ABBREV + " " + shared,
+         "tab:protocol-pearson"),
     ]:
         panel_rows = []
         for term in terms:
@@ -242,19 +248,14 @@ def main():
             elif term == "A-C":
                 row[0] = r"\specialrule{0.3pt}{1pt}{1pt} " + row[0]
             panel_rows.append(line(*row).rstrip("\n") + "[2pt]\n")
-        panel_spec = "lrrr" if idx is pidx else "@{}lrrr@{}"
-        panels.append(
-            "\\begin{minipage}[t]{0.49\\textwidth}\n\\vspace{0pt}\n\\centering\n"
-            + r"\emph{" + title + "}\\par\\smallskip\n"
-            + "\\begin{tabular}{" + panel_spec + "}\n\\toprule\n"
-            + line("Block", *[CLABEL[c] for c in CRITERIA]) + "\\midrule\n"
+        floats.append(
+            "\\begin{table}[t]\n\\centering\n\\small\n\\setlength{\\tabcolsep}{2pt}\n"
+            + "\\begin{tabular}{@{}lrrr@{}}\n\\toprule\n"
+            + line(*[r"\textbf{" + head + "}" for head in ("Block", *[CLABEL[c] for c in CRITERIA])]) + "\\midrule\n"
             + "".join(panel_rows)
-            + "\\bottomrule\n\\end{tabular}\n\\end{minipage}"
+            + "\\bottomrule\n\\end{tabular}\n\\caption{" + caption + "}\n\\label{" + label + "}\n\\end{table}\n"
         )
-    caption = (r"BFCL associations for all 18 models. Paired differences in protocol Kendall $\tau_b$ (left) and Pearson $r$ sensitivity for correct counts (right). Protocol coefficients and scoring rules are in Table~\ref{tab:protocol-associations}. Tied ceiling scores for Written steps leave some resamples undefined. Minus signs denote paired differences. " + ABBREV
-               + r" Pointwise 95\% percentile intervals use the same 10,000 paired model resamples as Table~\ref{tab:associations}. Differences are computed within each resample, and $u$ counts undefined resamples.")
-    save("protocol_pearson.tex", "\\begin{table*}[t]\n\\centering\n\\small\n\\setlength{\\tabcolsep}{2pt}\n"
-         + "\\hfill\n".join(panels) + "\n\\caption{" + caption + "}\n\\label{tab:protocol-pearson}\n\\end{table*}\n")
+    save("protocol_pearson.tex", "".join(floats))
     # Compact main-text view of the same stored Kendall estimates. The full
     # paired differences and Pearson sensitivity remain in protocol_pearson.tex.
     protocol_labels = {"A": r"\rowcolor{black!9} \textbf{" + NAME["A"] + "}", "A512_one": plabel["A512_one"],

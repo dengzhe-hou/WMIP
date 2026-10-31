@@ -18,16 +18,25 @@ def main():
         "\\begin{quote}\\small\n" + prompt + "\n\\end{quote}\nThe reference answer is " + str(item["gold"]) + ".\n")
     names = {"falcon3-1b-instruct": "Falcon3 1B", "falcon3-3b-instruct": "Falcon3 3B",
              "llama-3.2-3b-instruct": "Llama 3.2 3B", "command-r7b-12-2024": "Command R7B"}
+    # Written by hand from the two parsers' rules; the stored comparison file has no reason column.
+    contradiction = "P1 ignores the contradictory ``no permissions'' phrase."
+    reasons = {("falcon3-1b-instruct", "E-location-k7-01"): "P1 accepts a substring without word boundaries.",
+               ("falcon3-3b-instruct", "F-permissions-k3-06"): "P1 accepts a contradictory permission answer.",
+               ("llama-3.2-3b-instruct", "F-permissions-k3-06"): "P1 treats a partial denial as an empty set.",
+               ("llama-3.2-3b-instruct", "F-permissions-k5-05"): "P2 rejects a valid empty-set description.",
+               ("llama-3.2-3b-instruct", "F-permissions-k5-09"): contradiction,
+               ("llama-3.2-3b-instruct", "F-permissions-k7-04"): contradiction,
+               ("command-r7b-12-2024", "F-permissions-k7-02"): contradiction}
     changes = read("EF_SCORING_DIFFERENCES_20261004.csv")
+    assert len(changes) == len(reasons)
+    column = r">{\raggedright\arraybackslash}p"
     appendix_table("scoring_differences.tex", "tab:scoring-differences",
-                    "All seven scoring disagreements on the assignment items and the set and count items. "
-                    "Item identifiers match those in the released item bank. [] denotes the empty set (no permissions). "
-                    "Parser 1 accepts each response and Parser 2 rejects it. "
-                    "All responses stopped normally. The redundant negative description of an empty set is "
-                    "semantically compatible with the reference answer, despite failing Parser 2's format.",
-                    ["Model and item", "Reference answer", "Complete response"],
-                    [[esc(names[r["model"]]) + r"\newline " + esc(r["item_id"]), esc(r["gold"]), esc(r["raw_response"])] for r in changes],
-                    spec=r"p{3.1cm}p{2.9cm}p{7.8cm}")
+                    "All seven scoring disagreements among 3,240 assignment, set, and count responses. "
+                    "Parser 1 accepts every listed response, whereas Parser 2 rejects it. "
+                    "[] denotes the empty set. All seven responses stopped normally.",
+                    [r"\textbf{Model and item}", r"\textbf{Reference answer}", r"\textbf{Complete response}", r"\textbf{Disagreement reason}"],
+                    [[esc(names[r["model"]]) + r"\newline " + esc(r["item_id"]), esc(r["gold"]), esc(r["raw_response"]), reasons[r["model"], r["item_id"]]] for r in changes],
+                    spec="@{}" + column + "{3cm}" + column + "{2.6cm}" + column + "{5.2cm}" + column + r"{\dimexpr\textwidth-10.8cm-6\tabcolsep\relax}@{}")
     inputs = read("BFCL_INPUTS_20261004.csv")
     rows = []
     for row in inputs:
