@@ -1,4 +1,19 @@
-# WMIP v2026.10.3
+# WMIP v2026.10.4
+
+Released on 2026-11-03. The paper is on [arXiv](https://arxiv.org/abs/2603.27343), and the repository
+README, project website and this package now link to it.
+
+- `analysis/paper/gen_tables.py` and `gen_documentation.py` write the appendix
+  tables in the paper's current layout. The paired Kendall differences and the
+  Pearson sensitivity results are now two tables (A2 and A3), so the later
+  appendix tables are A4 and A5, and Table A1 adds a hand-written reason for
+  each scoring disagreement. The package README uses the new numbers.
+
+Every table data row, frozen item bank, stored model response, scoring rule
+and reported result is unchanged. The matching frozen Hugging Face banks
+remain at dataset tag `v2026.10.1`.
+
+## WMIP v2026.10.3
 
 Released on 2026-10-28. This version makes it easier to evaluate a new model
 and place it among the published ones.

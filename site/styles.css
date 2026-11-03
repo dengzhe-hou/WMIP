@@ -164,6 +164,7 @@ summary { cursor: pointer; }
   .content-width { width: calc(100% - 32px); }
   .site-header nav { gap: 0; }
   .resource-link { padding: 0 8px; }
+  .resource-link img { display: none; }
   .generator-section { padding-block: 24px; }
   .playground { margin-top: 20px; }
   .game-card { padding: 16px 20px 20px; }

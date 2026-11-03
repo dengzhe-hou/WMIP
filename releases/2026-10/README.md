@@ -1,6 +1,6 @@
 # WMIP: evaluation materials
 
-This package holds the item banks, the raw model responses, the scoring and analysis code, and the stored analysis outputs behind the paper "A Working-Memory-Inspired Programmable Probe of Cumulative State Tracking in Large Language Models". It contains no model weights and no credentials.
+This package holds the item banks, the raw model responses, the scoring and analysis code, and the stored analysis outputs behind the paper ["A Working-Memory-Inspired Programmable Probe of Cumulative State Tracking in Large Language Models"](https://arxiv.org/abs/2603.27343). It contains no model weights and no credentials.
 
 The paper refers to the blocks by name. This package uses the following codes in file names, item identifiers, CSV columns and this README.
 
@@ -21,7 +21,7 @@ The paper refers to the blocks by name. This package uses the following codes in
 
 ## Get the release
 
-The fixed public software version is [v2026.10.3](https://github.com/dengzhe-hou/WMIP/releases/tag/v2026.10.3). Its [release notes](RELEASE_NOTES.md) describe the reuse improvements; [CITATION.cff](../../CITATION.cff) provides the software citation. The unchanged Hugging Face item banks remain pinned at `v2026.10.1`.
+The fixed public software version is [v2026.10.4](https://github.com/dengzhe-hou/WMIP/releases/tag/v2026.10.4). Its [release notes](RELEASE_NOTES.md) describe the reuse improvements; [CITATION.cff](../../CITATION.cff) provides the software citation. The unchanged Hugging Face item banks remain pinned at `v2026.10.1`.
 
 For a GitHub clone, enter `releases/2026-10/`; it already contains the materials and you do not need either supplementary archive. All commands below run from this release directory.
 

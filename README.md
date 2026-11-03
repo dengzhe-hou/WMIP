@@ -4,7 +4,7 @@
 
 **A Working-Memory-Inspired Programmable Probe of Cumulative State Tracking in Large Language Models**
 
-[![Project website](site/assets/badges/project.svg)](https://dengzhe-hou.github.io/WMIP/) [![Hugging Face dataset](site/assets/badges/huggingface.svg)](https://huggingface.co/datasets/dengzhe-hou/WMIP) [![Stable release](site/assets/badges/release.svg)](https://github.com/dengzhe-hou/WMIP/releases/tag/v2026.10.3) [![Reproduction guide](site/assets/badges/docs.svg)](releases/2026-10/README.md)
+[![Paper](site/assets/badges/paper.svg)](https://arxiv.org/abs/2603.27343) [![Project website](site/assets/badges/project.svg)](https://dengzhe-hou.github.io/WMIP/) [![Hugging Face dataset](site/assets/badges/huggingface.svg)](https://huggingface.co/datasets/dengzhe-hou/WMIP) [![Stable release](site/assets/badges/release.svg)](https://github.com/dengzhe-hou/WMIP/releases/tag/v2026.10.4) [![Reproduction guide](site/assets/badges/docs.svg)](releases/2026-10/README.md)
 
 </div>
 
@@ -17,6 +17,7 @@ The October 2026 release in [`releases/2026-10/`](releases/2026-10/) holds the g
 
 ## News
 
+- **2026-11-03** The paper is on [arXiv](https://arxiv.org/abs/2603.27343). Release [v2026.10.4](https://github.com/dengzhe-hou/WMIP/releases/tag/v2026.10.4) adds the paper link and regenerates the appendix tables in the paper's current layout and numbering.
 - **2026-10-28** Release [v2026.10.3](https://github.com/dengzhe-hou/WMIP/releases/tag/v2026.10.3) runs every frozen bank with one command and compares your model with the 18 published models. It also adds lm-evaluation-harness and Inspect tasks.
 - **2026-10-26** Release [v2026.10.2](https://github.com/dengzhe-hou/WMIP/releases/tag/v2026.10.2) adds a [local Qwen tutorial](releases/2026-10/examples/README.md) that runs a real model on CPU.
 - **2026-10-26** Release [v2026.10.1](https://github.com/dengzhe-hou/WMIP/releases/tag/v2026.10.1) adds evaluation through a Python function or an existing answer file, resumable runs and per-task score summaries.
@@ -45,7 +46,7 @@ Across 18 models, accuracy is 84.9% on single-step arithmetic but 31.7% on core 
 Clone the stable release and enter its evaluation directory:
 
 ```bash
-git clone --branch v2026.10.3 https://github.com/dengzhe-hou/WMIP.git
+git clone --branch v2026.10.4 https://github.com/dengzhe-hou/WMIP.git
 cd WMIP/releases/2026-10
 ```
 
@@ -108,4 +109,16 @@ The [release README](releases/2026-10/README.md) covers rebuilding the item bank
 
 ## Citation and licenses
 
-Cite software release `2026.10.3` with [CITATION.cff](CITATION.cff) or GitHub's **Cite this repository** button, and cite the paper separately. Code is under [MIT](releases/2026-10/LICENSE), and author-owned data, figures and documentation are under [CC BY 4.0](releases/2026-10/LICENSE-DATA). The [NOTICE](releases/2026-10/NOTICE) covers the reused BFCL scores and model-generated text. No model weights or credentials are included.
+Cite the paper with the entry below, and cite software release `2026.10.4` with [CITATION.cff](CITATION.cff) or GitHub's **Cite this repository** button. Code is under [MIT](releases/2026-10/LICENSE), and author-owned data, figures and documentation are under [CC BY 4.0](releases/2026-10/LICENSE-DATA). The [NOTICE](releases/2026-10/NOTICE) covers the reused BFCL scores and model-generated text. No model weights or credentials are included.
+
+```bibtex
+@misc{hou2026wmip,
+  title         = {{WMIP}: A Working-Memory-Inspired Programmable Probe of Cumulative State Tracking in Large Language Models},
+  author        = {Hou, Dengzhe and Jiang, Lingyu and Li, Deng and Li, Zirui and Lin, Fangzhou and Yamada, Kazunori D},
+  year          = {2026},
+  eprint        = {2603.27343},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.AI},
+  url           = {https://arxiv.org/abs/2603.27343}
+}
+```

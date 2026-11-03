@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="88" height="32" viewBox="0 0 88 32" role="img" aria-label="Paper">
+  <title>Paper</title>
+  <rect x="0.5" y="0.5" width="87" height="31" rx="7.5" fill="#F8FAFC" stroke="#D0D7DE"/>
+  <g transform="translate(10 6) scale(0.8333333333)" fill="none" stroke="#475569" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></g>
+  <text x="38" y="20.5" fill="#24292F" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="500">Paper</text>
+</svg>
