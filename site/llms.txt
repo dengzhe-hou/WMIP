@@ -1,0 +1,39 @@
+# WMIP: A Working-Memory-Inspired Programmable Probe of Cumulative State Tracking in Large Language Models
+
+> WMIP is a working-memory-inspired probe of cumulative state tracking in large language models. A program generates the items and their answers, with 3 to 100 updates and final-state, intermediate-state or multi-target queries, and the same items are compared under different output protocols. Earlier versions of the paper were titled "WMF-AM".
+
+Authors: Dengzhe Hou, Lingyu Jiang, Deng Li, Zirui Li, Fangzhou Lin, Kazunori D Yamada. arXiv:2603.27343 (2026).
+
+## Main findings
+
+- Across 18 LLMs, accuracy is 84.9% on single-step arithmetic but 31.7% on core items that need one number after three to seven updates.
+- From 50 updates on, no model exceeds 10% accuracy.
+- Core accuracy reaches 88.0% under a larger budget with instructions to write steps and put the answer on the last line, mainly because of the instruction change rather than the budget.
+- Core accuracy correlates positively with public Berkeley Function Calling Leaderboard scores.
+
+## Relevant to work on
+
+- testing working memory or state tracking in language models
+- studying how written intermediate steps or output protocols change measured accuracy
+- generating fresh, contamination-free test items with program-computed answers
+- long sequences of updates within a single prompt
+
+## Links
+
+- [Paper](https://arxiv.org/abs/2603.27343)
+- [Project page](https://dengzhe-hou.github.io/WMIP/)
+- [Code](https://github.com/dengzhe-hou/WMIP)
+- [Data](https://huggingface.co/datasets/dengzhe-hou/WMIP)
+
+## Citation
+
+```bibtex
+@misc{hou2026wmip,
+  title         = {{WMIP}: A Working-Memory-Inspired Programmable Probe of Cumulative State Tracking in Large Language Models},
+  author        = {Hou, Dengzhe and Jiang, Lingyu and Li, Deng and Li, Zirui and Lin, Fangzhou and Yamada, Kazunori D},
+  year          = {2026},
+  eprint        = {2603.27343},
+  archivePrefix = {arXiv},
+  url           = {https://arxiv.org/abs/2603.27343}
+}
+```
