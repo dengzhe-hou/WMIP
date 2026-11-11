@@ -43,7 +43,7 @@ export function viewOf(board, view) {
       budget_gap: gap(row.scores.budget_last, row.scores.written_steps),
     },
   }));
-  return { metrics, rows, key: "core_gap" };
+  return { metrics, rows, key: "core" };
 }
 
 function render(board, table, view, key) {

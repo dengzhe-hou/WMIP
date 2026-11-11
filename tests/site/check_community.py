@@ -40,7 +40,7 @@ process.stdout.write(JSON.stringify({{
     assert result["ranked"] == [["b", 1], ["a", 2], ["c", 2], ["e", 4], ["d", None]], result
     assert result["columns"] == ["written_steps", "core", "core_gap", "budget_last", "budget_gap"], result
     assert result["scores"]["core_gap"] == -0.5 and result["scores"]["budget_gap"] is None, result
-    assert result["key"] == "core_gap", result
+    assert result["key"] == "core", result
 
     with TemporaryDirectory() as directory:
         board_path = Path(directory) / "community.json"
