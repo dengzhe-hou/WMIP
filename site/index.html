@@ -29,7 +29,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
-  <link rel="stylesheet" href="styles.css?v=10">
+  <link rel="stylesheet" href="styles.css?v=11">
   <script type="module" src="script.js?v=10"></script>
   <script type="module">import { initCommunity, initCitation } from "./community.mjs?v=3"; initCommunity(); initCitation();</script>
 </head>
@@ -58,6 +58,20 @@
         <a href="#community"><img src="assets/icons/tag.svg" width="16" height="16" alt="" aria-hidden="true">Leaderboard</a>
         <a href="#citation"><img src="assets/icons/book-open.svg" width="16" height="16" alt="" aria-hidden="true">BibTeX</a>
       </div>
+    </section>
+
+    <section class="community content-width" id="community" aria-labelledby="community-title">
+      <h2 id="community-title">Leaderboard</h2>
+      <p>Accuracy (%) with the published scoring rules. Paper rows are the 18 models in the paper. Community rows are runs submitted by others and rescored from their responses. Select a column to rank by it.</p>
+      <div class="view-switch" role="group" aria-label="Leaderboard view">
+        <button type="button" data-view="all" aria-pressed="true">All tasks</button>
+        <button type="button" data-view="protocol" aria-pressed="false">Written-steps gap</button>
+      </div>
+      <p class="view-note" id="community-view-note"></p>
+      <div class="community-scroll">
+        <table id="community-table"><caption class="visually-hidden">WMIP accuracy by model</caption></table>
+      </div>
+      <p class="community-note"><span id="community-status" role="status"></span> <a href="https://github.com/dengzhe-hou/WMIP/tree/main/submissions">Submit your model</a></p>
     </section>
 
     <section class="generator-section" id="generator" aria-labelledby="generator-title">
@@ -144,20 +158,6 @@
         <img src="assets/fig_framework.svg" width="1000" height="319" alt="Panel a maps a human working-memory updating task to the LLM probe: hold the values of three entities, apply gains, losses and transfers, and report one final value with little room for notes. Panel b shows accuracy pooled over 18 models. With answer only, accuracy falls steeply as updates accumulate and is near zero from 50 updates on. With written steps it stays near 88% on the core items. Single-step arithmetic is 84.9%.">
         <figcaption>(a) The probe mirrors human working-memory updating tasks. The core protocol leaves almost no room for written steps, so values must be tracked without notes. (b) Accuracy pooled over the 18 models. Solid lines compare the core and written-steps protocols on the same 60 items (3, 5 and 7 updates). The dashed line extends the core protocol to 10 to 100 updates. The diamond is single-step arithmetic on separate items.</figcaption>
       </figure>
-    </section>
-
-    <section class="community content-width" id="community" aria-labelledby="community-title">
-      <h2 id="community-title">Leaderboard</h2>
-      <p>Accuracy (%) with the published scoring rules. Paper rows are the 18 models in the paper. Community rows are runs submitted by others and rescored from their responses. Select a column to rank by it.</p>
-      <div class="view-switch" role="group" aria-label="Leaderboard view">
-        <button type="button" data-view="all" aria-pressed="true">All tasks</button>
-        <button type="button" data-view="protocol" aria-pressed="false">Written-steps gap</button>
-      </div>
-      <p class="view-note" id="community-view-note"></p>
-      <div class="community-scroll">
-        <table id="community-table"><caption class="visually-hidden">WMIP accuracy by model</caption></table>
-      </div>
-      <p class="community-note"><span id="community-status" role="status"></span> <a href="https://github.com/dengzhe-hou/WMIP/tree/main/submissions">Submit your model</a></p>
     </section>
 
     <section class="citation content-width" id="citation" aria-labelledby="citation-title">
