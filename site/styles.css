@@ -13,8 +13,8 @@
   --coral: #f64932;
   --sky-wash: #62aef0;
   --hairline: rgba(0, 0, 0, .08);
-  --small: 14px;
-  --body: 16px;
+  --small: 16px;
+  --body: 18px;
   --heading: 40px;
   --display: 72px;
   --hero: 54px;
@@ -42,7 +42,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
   outline: 2px solid var(--blue);
   outline-offset: 3px;
 }
-.content-width { width: min(980px, calc(100% - 64px)); margin-inline: auto; }
+.content-width { width: min(1100px, calc(100% - 64px)); margin-inline: auto; }
 .skip-link { position: absolute; top: -100px; left: 24px; padding: 12px; background: var(--card); border-radius: 8px; z-index: 2; }
 .skip-link:focus { top: 12px; }
 
@@ -53,7 +53,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
   justify-content: space-between;
   gap: 24px;
 }
-.wordmark { font-weight: 700; font-size: 18px; letter-spacing: -.02em; }
+.wordmark { font-weight: 700; font-size: 20px; letter-spacing: -.02em; }
 .site-header nav { display: flex; gap: 4px; font-size: var(--small); font-weight: 500; }
 .resource-link { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 12px; border-radius: 8px; color: rgba(0, 0, 0, .54); white-space: nowrap; }
 .resource-link img { display: block; width: 18px; height: 18px; flex: none; opacity: .75; }
@@ -147,8 +147,8 @@ summary { cursor: pointer; }
 .noscript-note { text-align: center; margin-top: 24px; font-size: var(--small); }
 
 .community { padding-block: 32px 8px; }
-.community h2 { font-size: 22px; font-weight: 700; letter-spacing: -.01em; text-align: center; }
-.community > p { color: var(--muted); font-size: var(--small); margin: 8px auto 20px; max-width: 680px; text-align: center; }
+.community h2 { font-size: 28px; font-weight: 700; letter-spacing: -.01em; text-align: center; }
+.community > p { color: var(--muted); font-size: var(--small); margin: 8px auto 20px; max-width: 760px; text-align: center; }
 .community-scroll { overflow-x: auto; background: var(--card); border: 1px solid var(--hairline); border-radius: 12px; }
 .community table { width: 100%; border-collapse: collapse; font-size: var(--small); font-variant-numeric: tabular-nums; text-align: right; }
 .community th, .community td { padding: 8px 10px; border-bottom: 1px solid var(--hairline); white-space: nowrap; }
@@ -167,7 +167,7 @@ summary { cursor: pointer; }
 .community-note a { color: var(--blue); }
 
 .paper-hero { text-align: center; padding-block: 40px 8px; }
-.paper-hero h1 { font-size: 30px; font-weight: 700; letter-spacing: -.02em; line-height: 1.2; max-width: 820px; margin-inline: auto; text-wrap: balance; }
+.paper-hero h1 { font-size: 38px; font-weight: 700; letter-spacing: -.02em; line-height: 1.2; max-width: 960px; margin-inline: auto; text-wrap: balance; }
 .paper-hero .authors { margin-top: 16px; font-weight: 500; }
 .paper-hero .affiliations { color: var(--muted); font-size: var(--small); margin-top: 6px; }
 .paper-hero .affiliations span { display: inline-block; margin-inline: 6px; }
@@ -179,7 +179,7 @@ summary { cursor: pointer; }
 .paper-links img.brand-icon { filter: none; width: 18px; height: 18px; }
 
 .overview { padding-block: 40px 8px; }
-.overview h2, .citation h2 { font-size: 22px; font-weight: 700; letter-spacing: -.01em; text-align: center; }
+.overview h2, .citation h2 { font-size: 28px; font-weight: 700; letter-spacing: -.01em; text-align: center; }
 .overview figure { margin: 20px 0 0; }
 .overview img { display: block; width: 100%; height: auto; background: #fff; border: 1px solid var(--hairline); border-radius: 12px; padding: 16px; }
 .overview figcaption { color: var(--muted); font-size: var(--small); margin: 12px auto 0; max-width: 760px; }
@@ -187,20 +187,20 @@ summary { cursor: pointer; }
 .view-switch { display: flex; justify-content: center; gap: 4px; margin: 0 auto 12px; }
 .view-switch button { border: 1px solid var(--hairline); background: var(--card); border-radius: 999px; padding: 6px 14px; font-size: var(--small); color: var(--muted); }
 .view-switch button[aria-pressed="true"] { background: var(--sky-tint); color: var(--blue); border-color: transparent; font-weight: 500; }
-.view-note { color: var(--quiet); font-size: 13px; text-align: center; margin: 0 auto 12px; max-width: 680px; }
+.view-note { color: var(--quiet); font-size: var(--small); text-align: center; margin: 0 auto 12px; max-width: 680px; }
 .view-note:empty { display: none; }
 
 .citation { padding-block: 40px 8px; }
 .bibtex { position: relative; margin-top: 20px; background: var(--card); border: 1px solid var(--hairline); border-radius: 12px; }
-.bibtex pre { margin: 0; padding: 16px 20px; overflow-x: auto; font-size: 13px; line-height: 1.5; }
+.bibtex pre { margin: 0; padding: 16px 20px; overflow-x: auto; font-size: 15px; line-height: 1.5; }
 .bibtex .text-button { position: absolute; top: 4px; right: 12px; }
 .citation .action-status { text-align: center; }
 
 .project-summary { text-align: center; padding-block: 32px 40px; }
-.project-summary h2 { font-size: 22px; font-weight: 700; letter-spacing: -.01em; }
+.project-summary h2 { font-size: 28px; font-weight: 700; letter-spacing: -.01em; }
 .project-summary p { color: var(--muted); font-size: var(--small); margin-block: 8px 12px; }
 .project-summary .text-link { font-size: var(--small); }
-.site-footer { padding-block: 24px 32px; border-top: 1px solid var(--hairline); color: var(--quiet); font-size: 12px; }
+.site-footer { padding-block: 24px 32px; border-top: 1px solid var(--hairline); color: var(--quiet); font-size: 14px; }
 .site-footer a { text-decoration: underline; text-underline-offset: 3px; }
 
 @media (max-width: 760px) {
@@ -210,9 +210,9 @@ summary { cursor: pointer; }
 }
 
 @media (max-width: 480px) {
-  :root { --display: 44px; --hero: 32px; --heading: 28px; }
+  :root { --display: 44px; --hero: 32px; --heading: 28px; --small: 15px; --body: 17px; }
   .paper-hero { padding-top: 24px; }
-  .paper-hero h1 { font-size: 22px; }
+  .paper-hero h1 { font-size: 26px; }
   .overview img { padding: 8px; }
   .content-width { width: calc(100% - 32px); }
   .site-header nav { gap: 0; }
