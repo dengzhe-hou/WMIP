@@ -29,9 +29,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
-  <link rel="stylesheet" href="styles.css?v=9">
+  <link rel="stylesheet" href="styles.css?v=10">
   <script type="module" src="script.js?v=10"></script>
-  <script type="module">import { initCommunity } from "./community.mjs?v=1"; initCommunity();</script>
+  <script type="module">import { initCommunity, initCitation } from "./community.mjs?v=2"; initCommunity(); initCitation();</script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -46,9 +46,23 @@
   </header>
 
   <main id="main">
+    <section class="paper-hero content-width" aria-labelledby="paper-title">
+      <h1 id="paper-title">WMIP: A Working-Memory-Inspired Programmable Probe of Cumulative State Tracking in Large Language Models</h1>
+      <p class="authors">Dengzhe Hou<sup>1,*</sup> · Lingyu Jiang<sup>1</sup> · Deng Li<sup>2</sup> · Zirui Li<sup>1</sup> · Fangzhou Lin<sup>1,3,4</sup> · Kazunori D Yamada<sup>1</sup></p>
+      <p class="affiliations"><span><sup>1</sup>Tohoku University</span> <span><sup>2</sup>Lappeenranta-Lahti University of Technology LUT</span> <span><sup>3</sup>Texas A&amp;M University</span> <span><sup>4</sup>Worcester Polytechnic Institute</span></p>
+      <p class="affiliations"><sup>*</sup>Corresponding author</p>
+      <div class="paper-links">
+        <a href="https://arxiv.org/abs/2603.27343"><img src="assets/icons/file-text.svg" width="16" height="16" alt="" aria-hidden="true">arXiv</a>
+        <a href="https://github.com/dengzhe-hou/WMIP"><img src="assets/icons/code.svg" width="16" height="16" alt="" aria-hidden="true">Code</a>
+        <a href="https://huggingface.co/datasets/dengzhe-hou/WMIP"><img src="assets/icons/huggingface.svg" width="16" height="16" alt="" aria-hidden="true">Dataset</a>
+        <a href="#community"><img src="assets/icons/tag.svg" width="16" height="16" alt="" aria-hidden="true">Leaderboard</a>
+        <a href="#citation"><img src="assets/icons/book-open.svg" width="16" height="16" alt="" aria-hidden="true">BibTeX</a>
+      </div>
+    </section>
+
     <section class="generator-section" id="generator" aria-labelledby="generator-title">
       <div class="content-width">
-        <h1 id="generator-title">Can you <span class="highlight">keep track</span>?</h1>
+        <h2 class="game-title" id="generator-title">Can you <span class="highlight">keep track</span>?</h2>
         <noscript><p class="noscript-note">Enable JavaScript to play or generate a batch. The frozen dataset is linked in the navigation.</p></noscript>
 
         <div class="playground" id="playground" hidden>
@@ -124,13 +138,43 @@
       </div>
     </section>
 
+    <section class="overview content-width" id="overview" aria-labelledby="overview-title">
+      <h2 id="overview-title">Overview</h2>
+      <figure>
+        <img src="assets/fig_framework.svg" width="1000" height="319" alt="Panel a maps a human working-memory updating task to the LLM probe: hold the values of three entities, apply gains, losses and transfers, and report one final value with little room for notes. Panel b shows accuracy pooled over 18 models. With answer only, accuracy falls steeply as updates accumulate and is near zero from 50 updates on. With written steps it stays near 88% on the core items. Single-step arithmetic is 84.9%.">
+        <figcaption>(a) The probe mirrors human working-memory updating tasks. The core protocol leaves almost no room for written steps, so values must be tracked without notes. (b) Accuracy pooled over the 18 models. Solid lines compare the core and written-steps protocols on the same 60 items (3, 5 and 7 updates). The dashed line extends the core protocol to 10 to 100 updates. The diamond is single-step arithmetic on separate items.</figcaption>
+      </figure>
+    </section>
+
     <section class="community content-width" id="community" aria-labelledby="community-title">
       <h2 id="community-title">Leaderboard</h2>
       <p>Accuracy (%) with the published scoring rules. Paper rows are the 18 models in the paper. Community rows are runs submitted by others and rescored from their responses. Select a column to rank by it.</p>
+      <div class="view-switch" role="group" aria-label="Leaderboard view">
+        <button type="button" data-view="all" aria-pressed="true">All tasks</button>
+        <button type="button" data-view="protocol" aria-pressed="false">Written-steps gap</button>
+      </div>
+      <p class="view-note" id="community-view-note"></p>
       <div class="community-scroll">
         <table id="community-table"><caption class="visually-hidden">WMIP accuracy by model</caption></table>
       </div>
       <p class="community-note"><span id="community-status" role="status"></span> <a href="https://github.com/dengzhe-hou/WMIP/tree/main/submissions">Submit your model</a></p>
+    </section>
+
+    <section class="citation content-width" id="citation" aria-labelledby="citation-title">
+      <h2 id="citation-title">Citation</h2>
+      <div class="bibtex">
+        <button class="text-button" id="copy-bibtex" type="button">Copy</button>
+        <pre id="bibtex-text" tabindex="0" aria-label="BibTeX entry">@misc{hou2026wmip,
+  title         = {{WMIP}: A Working-Memory-Inspired Programmable Probe of Cumulative State Tracking in Large Language Models},
+  author        = {Hou, Dengzhe and Jiang, Lingyu and Li, Deng and Li, Zirui and Lin, Fangzhou and Yamada, Kazunori D},
+  year          = {2026},
+  eprint        = {2603.27343},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.AI},
+  url           = {https://arxiv.org/abs/2603.27343}
+}</pre>
+      </div>
+      <p class="action-status" id="bibtex-status" role="status"></p>
     </section>
 
     <section class="project-summary content-width" aria-labelledby="project-title">
