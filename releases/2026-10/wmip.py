@@ -19,10 +19,12 @@ import csv
 import importlib.util
 import io
 import json
+import re
 import subprocess
 import sys
 import tempfile
 from collections.abc import Callable, Iterable, Mapping
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -443,6 +445,123 @@ def blank_ratio(value: float | None) -> str:
     return "" if value is None else f"{value:.6f}"
 
 
+# ── Community submissions ────────────────────────────────────────────────────
+
+SUBMISSIONS = HERE.parent.parent / "submissions"
+METADATA_FIELDS = ["model_name", "checkpoint", "revision", "server", "inference_settings",
+                   "precision", "hardware", "command", "code_revision", "evidence_url"]
+RUN_FILES = [f"{name}{suffix}" for name in BANKS for suffix in (".jsonl", ".jsonl.runs.jsonl")]
+
+
+def _check_metadata(metadata: Mapping[str, Any]) -> None:
+    missing = [key for key in METADATA_FIELDS if key not in metadata]
+    unknown = sorted(metadata.keys() - set(METADATA_FIELDS) - {"notes"})
+    if missing or unknown:
+        raise ValueError(f"metadata: missing {missing}, unknown {unknown}")
+    for key, value in metadata.items():
+        if not isinstance(value, str) or not value.strip() or "REPLACE_" in value:
+            raise ValueError(f"metadata: fill in {key}")
+    if not metadata["evidence_url"].startswith("https://"):
+        raise ValueError("metadata: evidence_url must be an https link")
+
+
+def _check_run(run_dir: Path, model_name: str) -> tuple[dict[str, float], dict[str, str]]:
+    """Score a complete three-bank run and check that one setting produced it."""
+    absent = [name for name in RUN_FILES if not (run_dir / name).exists()]
+    if absent:
+        raise ValueError(f"{run_dir}: missing {absent}; run all three banks with `wmip.py run`")
+    for name in BANKS:
+        configs = [json.loads(line)["config"]
+                   for line in (run_dir / f"{name}.jsonl.runs.jsonl").read_text(encoding="utf-8").splitlines()
+                   if line.strip()]
+        if not configs:
+            raise ValueError(f"{run_dir}: {name}.jsonl.runs.jsonl is empty")
+        settings = [{key: value for key, value in config.items() if key != "base_url"}
+                    for config in configs]
+        if any(setting != settings[0] for setting in settings):
+            raise ValueError(f"{run_dir}: {name} bank was resumed with different settings; "
+                             "rerun it into a fresh --out-dir")
+        if settings[0]["label"] != model_name:
+            raise ValueError(f"{run_dir}: {name} bank label {settings[0]['label']!r} "
+                             f"is not model_name {model_name!r}")
+    with tempfile.TemporaryDirectory(prefix="wmip-check-") as temp:
+        for name in BANKS:
+            (Path(temp) / f"{name}.jsonl").write_bytes((run_dir / f"{name}.jsonl").read_bytes())
+        label, scores, coverage = _your_scores(Path(temp))
+    if label != model_name:
+        raise ValueError(f"{run_dir}: responses are labeled {label!r}, not {model_name!r}")
+    if model_name in published_scores():
+        raise ValueError(f"model_name {model_name!r} equals a published model name")
+    incomplete = {key: cover for key, cover in coverage.items()
+                  if cover.split("/")[0] != cover.split("/")[1]}
+    if incomplete:
+        raise ValueError(f"{run_dir}: incomplete (scored/total) {incomplete}; "
+                         "rerun the same command to retry missing requests")
+    return {key: round(value, 6) for key, value in scores.items()}, coverage
+
+
+def package(run_dir: str | Path, metadata_path: str | Path, submission_id: str,
+            out_dir: str | Path) -> Path:
+    """Copy a complete run and its scores into a new submission directory."""
+    run_dir, out_dir = Path(run_dir), Path(out_dir)
+    if not re.fullmatch(r"[a-z0-9][a-z0-9.-]{2,79}", submission_id):
+        raise ValueError("--id must use 3-80 lowercase letters, digits, dots or hyphens")
+    if out_dir.name != submission_id:
+        raise ValueError(f"--output must end in the directory {submission_id}")
+    if out_dir.exists():
+        raise ValueError(f"{out_dir} already exists")
+    metadata = json.loads(Path(metadata_path).read_text(encoding="utf-8"))
+    _check_metadata(metadata)
+    scores, coverage = _check_run(run_dir, metadata["model_name"])
+    out_dir.mkdir(parents=True)
+    for name in RUN_FILES:
+        (out_dir / name).write_bytes((run_dir / name).read_bytes())
+    submission = {"submission_id": submission_id,
+                  "submitted": datetime.now(timezone.utc).date().isoformat(),
+                  "metadata": metadata, "scores": scores, "coverage": coverage}
+    (out_dir / "submission.json").write_text(json.dumps(submission, indent=2, ensure_ascii=False) + "\n",
+                                             encoding="utf-8")
+    print(f"Packaged {metadata['model_name']} into {out_dir}. Core {100 * scores['core']:.1f}%.")
+    return out_dir
+
+
+def check_submissions(root: str | Path = SUBMISSIONS, export: str | Path | None = None) -> int:
+    """Rescore every submission from its responses and compare with its stated scores."""
+    root = Path(root)
+    entries, failures = [], []
+    for folder in sorted(path for path in root.iterdir() if path.is_dir()):
+        try:
+            files = sorted(path.name for path in folder.iterdir())
+            if files != sorted(RUN_FILES + ["submission.json"]):
+                raise ValueError(f"files must be exactly submission.json and {RUN_FILES}; found {files}")
+            submission = json.loads((folder / "submission.json").read_text(encoding="utf-8"))
+            if sorted(submission) != ["coverage", "metadata", "scores", "submission_id", "submitted"]:
+                raise ValueError("submission.json has unexpected top-level fields")
+            if submission["submission_id"] != folder.name:
+                raise ValueError("submission_id differs from the directory name")
+            _check_metadata(submission["metadata"])
+            scores, coverage = _check_run(folder, submission["metadata"]["model_name"])
+            if submission["scores"] != scores or submission["coverage"] != coverage:
+                raise ValueError(f"stated scores differ from the rescored responses: {scores}")
+            entries.append(submission)
+            print(f"ok    {folder.name}")
+        except (ValueError, KeyError, json.JSONDecodeError) as error:
+            failures.append(folder.name)
+            print(f"FAIL  {folder.name}: {error}")
+    print(f"{len(entries)} submission(s) passed, {len(failures)} failed.")
+    if export is not None:
+        board = {
+            "metrics": [{"key": key, "heading": heading, "rule": rule} for key, heading, _, rule in METRICS],
+            "paper": [{"model": name, "scores": values} for name, values in published_scores().items()],
+            "community": [{"id": entry["submission_id"], "model": entry["metadata"]["model_name"],
+                           "submitted": entry["submitted"], "scores": entry["scores"],
+                           "checkpoint": entry["metadata"]["checkpoint"],
+                           "evidence_url": entry["metadata"]["evidence_url"]} for entry in entries],
+        }
+        Path(export).write_text(json.dumps(board, indent=1) + "\n", encoding="utf-8")
+    return 1 if failures else 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -466,6 +585,14 @@ def main() -> int:
     scoring.add_argument("--label", required=True)
     scoring.add_argument("--out-dir", type=Path, required=True)
     scoring.add_argument("--synthetic", action="store_true", help="mark mock data, not model results")
+    packing = subparsers.add_parser("package", help="Package a complete run for the community leaderboard")
+    packing.add_argument("--run-dir", type=Path, required=True)
+    packing.add_argument("--metadata", type=Path, required=True)
+    packing.add_argument("--id", required=True, help="submission ID, e.g. my-model-20261111")
+    packing.add_argument("--output", type=Path, required=True, help="new directory submissions/<id>")
+    checking = subparsers.add_parser("check-submissions", help="Rescore and check every submission")
+    checking.add_argument("--root", type=Path, default=SUBMISSIONS)
+    checking.add_argument("--export", type=Path, help="write the leaderboard JSON for the homepage")
     args, passthrough = parser.parse_known_args()
     if args.command == "run":
         banks = [name.strip() for name in args.banks.split(",") if name.strip()]
@@ -479,6 +606,11 @@ def main() -> int:
     if args.command == "compare":
         compare(args.run_dir)
         return 0
+    if args.command == "package":
+        package(args.run_dir, args.metadata, args.id, args.output)
+        return 0
+    if args.command == "check-submissions":
+        return check_submissions(args.root, args.export)
     items = load_items(args.bank)
     _scoring_family(items)
     records = import_responses(items, args.responses, args.out_dir / "responses.jsonl", args.label,

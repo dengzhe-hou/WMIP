@@ -4,7 +4,7 @@
 
 **A Working-Memory-Inspired Programmable Probe of Cumulative State Tracking in Large Language Models**
 
-[![Paper](site/assets/badges/paper.svg)](https://arxiv.org/abs/2603.27343) [![Project website](site/assets/badges/project.svg)](https://dengzhe-hou.github.io/WMIP/) [![Hugging Face dataset](site/assets/badges/huggingface.svg)](https://huggingface.co/datasets/dengzhe-hou/WMIP) [![Stable release](site/assets/badges/release.svg)](https://github.com/dengzhe-hou/WMIP/releases/tag/v2026.10.4) [![Reproduction guide](site/assets/badges/docs.svg)](releases/2026-10/README.md)
+[![Paper](site/assets/badges/paper.svg)](https://arxiv.org/abs/2603.27343) [![Project website](site/assets/badges/project.svg)](https://dengzhe-hou.github.io/WMIP/) [![Hugging Face dataset](site/assets/badges/huggingface.svg)](https://huggingface.co/datasets/dengzhe-hou/WMIP) [![Stable release](site/assets/badges/release.svg)](https://github.com/dengzhe-hou/WMIP/releases/tag/v2026.10.5) [![Reproduction guide](site/assets/badges/docs.svg)](releases/2026-10/README.md)
 
 </div>
 
@@ -17,6 +17,7 @@ The October 2026 release in [`releases/2026-10/`](releases/2026-10/) holds the g
 
 ## News
 
+- **2026-11-11** A [community leaderboard](https://dengzhe-hou.github.io/WMIP/#community) is open. Release [v2026.10.5](https://github.com/dengzhe-hou/WMIP/releases/tag/v2026.10.5) adds `wmip.py package` and `wmip.py check-submissions` for submitting a complete run through a pull request.
 - **2026-11-03** The paper is on [arXiv](https://arxiv.org/abs/2603.27343). Release [v2026.10.4](https://github.com/dengzhe-hou/WMIP/releases/tag/v2026.10.4) adds the paper link and regenerates the appendix tables in the paper's current layout and numbering.
 - **2026-10-28** Release [v2026.10.3](https://github.com/dengzhe-hou/WMIP/releases/tag/v2026.10.3) runs every frozen bank with one command and compares your model with the 18 published models. It also adds lm-evaluation-harness and Inspect tasks.
 - **2026-10-26** Release [v2026.10.2](https://github.com/dengzhe-hou/WMIP/releases/tag/v2026.10.2) adds a [local Qwen tutorial](releases/2026-10/examples/README.md) that runs a real model on CPU.
@@ -46,7 +47,7 @@ Across 18 models, accuracy is 84.9% on single-step arithmetic but 31.7% on core 
 Clone the stable release and enter its evaluation directory:
 
 ```bash
-git clone --branch v2026.10.4 https://github.com/dengzhe-hou/WMIP.git
+git clone --branch v2026.10.5 https://github.com/dengzhe-hou/WMIP.git
 cd WMIP/releases/2026-10
 ```
 
@@ -82,6 +83,10 @@ For other models, check the model card.
 - **Answers you already have**: score them with `python wmip.py score`, as shown in the [release README](releases/2026-10/README.md#reuse-with-your-model).
 - **lm-evaluation-harness or Inspect**: use the [framework tasks](releases/2026-10/integrations/README.md).
 - **A first run on your own machine**: follow the [local Qwen tutorial](releases/2026-10/examples/README.md).
+
+## Submit your results
+
+A complete run can join the [leaderboard](https://dengzhe-hou.github.io/WMIP/#community). Package it with `python wmip.py package` and open a pull request that adds it under `submissions/`. The check rescores the included responses with the published rules. The [submission guide](submissions/README.md) has the steps.
 
 ## Reproduce the paper
 

@@ -1,0 +1,27 @@
+name: Check community results
+
+on:
+  pull_request:
+    paths:
+      - 'submissions/**'
+      - 'releases/2026-10/wmip.py'
+      - 'site/community.mjs'
+      - 'tests/reuse/test_community.py'
+      - '.github/workflows/community.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - name: Rescore every submission from its responses
+        run: python3 releases/2026-10/wmip.py check-submissions
+      - name: Test packaging and the leaderboard ranking
+        run: |
+          python3 -m unittest discover -s tests/reuse -p test_community.py -v
+          python3 tests/site/check_community.py

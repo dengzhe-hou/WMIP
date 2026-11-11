@@ -31,6 +31,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="styles.css?v=9">
   <script type="module" src="script.js?v=10"></script>
+  <script type="module">import { initCommunity } from "./community.mjs?v=1"; initCommunity();</script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -121,6 +122,15 @@
         </div>
         <p class="generator-note">Core-task preview. <a href="https://github.com/dengzhe-hou/WMIP/blob/main/releases/2026-10/code/generator/build_item_bank.py">Generator source</a></p>
       </div>
+    </section>
+
+    <section class="community content-width" id="community" aria-labelledby="community-title">
+      <h2 id="community-title">Leaderboard</h2>
+      <p>Accuracy (%) with the published scoring rules. Paper rows are the 18 models in the paper. Community rows are runs submitted by others and rescored from their responses. Select a column to rank by it.</p>
+      <div class="community-scroll">
+        <table id="community-table"><caption class="visually-hidden">WMIP accuracy by model</caption></table>
+      </div>
+      <p class="community-note"><span id="community-status" role="status"></span> <a href="https://github.com/dengzhe-hou/WMIP/tree/main/submissions">Submit your model</a></p>
     </section>
 
     <section class="project-summary content-width" aria-labelledby="project-title">

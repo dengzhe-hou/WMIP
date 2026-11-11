@@ -146,6 +146,23 @@ summary { cursor: pointer; }
 .generator-note a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .noscript-note { text-align: center; margin-top: 24px; font-size: var(--small); }
 
+.community { padding-block: 40px 8px; }
+.community h2 { font-size: 22px; font-weight: 700; letter-spacing: -.01em; text-align: center; }
+.community > p { color: var(--muted); font-size: var(--small); margin: 8px auto 20px; max-width: 680px; text-align: center; }
+.community-scroll { overflow-x: auto; background: var(--card); border: 1px solid var(--hairline); border-radius: 12px; }
+.community table { width: 100%; border-collapse: collapse; font-size: var(--small); font-variant-numeric: tabular-nums; text-align: right; }
+.community th, .community td { padding: 8px 10px; border-bottom: 1px solid var(--hairline); white-space: nowrap; }
+.community thead th { font-weight: 500; color: var(--muted); }
+.community thead button { border: 0; background: none; padding: 0; font: inherit; color: inherit; cursor: pointer; }
+.community thead button[aria-pressed="true"] { color: var(--blue); }
+.community tbody th, .community thead th:nth-child(2), .community td:nth-child(3), .community thead th:nth-child(3) { text-align: left; font-weight: 500; }
+.community td:nth-child(3) { color: var(--quiet); }
+.community tbody tr:last-child > * { border-bottom: 0; }
+.community .community-row { background: var(--sky-tint); }
+.community tbody a { color: var(--blue); }
+.community-note { color: var(--quiet); font-size: var(--small); text-align: center; margin-top: 12px; }
+.community-note a { color: var(--blue); }
+
 .project-summary { text-align: center; padding-block: 32px 40px; }
 .project-summary h2 { font-size: 22px; font-weight: 700; letter-spacing: -.01em; }
 .project-summary p { color: var(--muted); font-size: var(--small); margin-block: 8px 12px; }

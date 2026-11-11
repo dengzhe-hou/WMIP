@@ -1,4 +1,23 @@
-# WMIP v2026.10.4
+# WMIP v2026.10.5
+
+Released on 2026-11-11. Other researchers can now add their models to a
+community leaderboard on the project website.
+
+- `python wmip.py package` turns a complete `wmip.py run` directory and a
+  filled-in metadata file into a submission. The submission keeps the raw
+  responses and run records of all three banks.
+- `python wmip.py check-submissions` rescores every submission from its
+  responses with the published rules and rejects incomplete runs, runs
+  resumed with different settings, unfilled metadata and scores that do not
+  match the responses. GitHub runs it on every pull request.
+- The website shows the 18 paper models and merged community runs in one
+  table that can be ranked by any column. Equal values share a rank.
+
+The evaluation, scoring rules, frozen item banks, stored responses and
+reported results are unchanged. The Hugging Face banks remain at dataset tag
+`v2026.10.1`.
+
+## WMIP v2026.10.4
 
 Released on 2026-11-03. The paper is on [arXiv](https://arxiv.org/abs/2603.27343), and the repository
 README, project website and this package now link to it.

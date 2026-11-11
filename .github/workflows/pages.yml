@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'site/**'
+      - 'submissions/**'
       - 'tests/site/**'
       - 'tests/reuse/**'
       - 'releases/2026-10/code/generator/build_item_bank.py'
@@ -39,6 +40,7 @@ jobs:
           python3 tests/site/check_generator.py
           python3 tests/site/check_batch.py
           python3 tests/site/check_browser_evaluation.py
+          python3 tests/site/check_community.py
           python3 -m unittest discover -s tests/reuse -v
       - name: Configure Pages
         uses: actions/configure-pages@v6
@@ -46,6 +48,7 @@ jobs:
         run: |
           mkdir -p "$RUNNER_TEMP/wmip-site"
           cp -R site/. "$RUNNER_TEMP/wmip-site/"
+          python3 releases/2026-10/wmip.py check-submissions --export "$RUNNER_TEMP/wmip-site/community.json"
       - name: Upload website
         uses: actions/upload-pages-artifact@v5
         with:
