@@ -176,6 +176,7 @@ summary { cursor: pointer; }
 .paper-links a { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 16px; border-radius: 999px; background: var(--ink); color: #fff; font-size: var(--small); font-weight: 500; }
 .paper-links a:hover { background: #333; }
 .paper-links img { filter: invert(1); }
+.paper-links img.brand-icon { filter: none; width: 18px; height: 18px; }
 
 .overview { padding-block: 40px 8px; }
 .overview h2, .citation h2 { font-size: 22px; font-weight: 700; letter-spacing: -.01em; text-align: center; }
