@@ -244,3 +244,9 @@ summary { cursor: pointer; }
   html { scroll-behavior: auto; }
   a, button, input { transition: none; }
 }
+
+.submit-box { margin: 20px auto 0; max-width: 760px; padding: 20px 24px; background: var(--card); border: 1px solid var(--hairline); border-radius: 12px; text-align: center; }
+.submit-box h3 { font-size: 20px; font-weight: 700; }
+.submit-box p { color: var(--muted); font-size: var(--small); margin: 8px 0 16px; }
+.submit-box code { font-size: .92em; background: rgba(0, 0, 0, .05); padding: 1px 5px; border-radius: 4px; }
+.submit-actions { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px 24px; }

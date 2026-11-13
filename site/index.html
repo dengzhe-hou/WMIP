@@ -35,7 +35,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
-  <link rel="stylesheet" href="styles.css?v=14">
+  <link rel="stylesheet" href="styles.css?v=15">
   <script type="module" src="script.js?v=10"></script>
   <script type="module">import { initCommunity, initCitation } from "./community.mjs?v=3"; initCommunity(); initCitation();</script>
 </head>
@@ -57,6 +57,7 @@
         <a href="https://huggingface.co/datasets/dengzhe-hou/WMIP"><img class="brand-icon" src="assets/icons/huggingface.svg" width="16" height="16" alt="" aria-hidden="true">Dataset</a>
         <a href="https://github.com/dengzhe-hou/WMIP/blob/main/releases/2026-10/README.md"><img src="assets/icons/book-open.svg" width="16" height="16" alt="" aria-hidden="true">Docs</a>
         <a href="#community"><img src="assets/icons/tag.svg" width="16" height="16" alt="" aria-hidden="true">Leaderboard</a>
+        <a href="#submit"><img src="assets/icons/upload.svg" width="16" height="16" alt="" aria-hidden="true">Submit</a>
         <a href="#citation"><img src="assets/icons/file-text.svg" width="16" height="16" alt="" aria-hidden="true">BibTeX</a>
       </div>
     </section>
@@ -72,7 +73,16 @@
       <div class="community-scroll">
         <table id="community-table"><caption class="visually-hidden">WMIP accuracy by model</caption></table>
       </div>
-      <p class="community-note"><span id="community-status" role="status"></span> <a href="https://github.com/dengzhe-hou/WMIP/tree/main/submissions">Submit your model</a></p>
+      <p class="community-note"><span id="community-status" role="status"></span></p>
+      <div class="submit-box" id="submit">
+        <h3>Add your model</h3>
+        <p>Run all three banks with <code>python wmip.py run</code>, package the run, and send it as a pull request or through the result form. Every submission is rescored from its raw responses before it joins the table.</p>
+        <div class="submit-actions">
+          <a class="button" href="https://github.com/dengzhe-hou/WMIP/tree/main/submissions">Submission guide</a>
+          <a class="text-link" href="https://github.com/dengzhe-hou/WMIP/issues/new?template=result_report.yml">Report with a form</a>
+          <a class="text-link" href="https://github.com/dengzhe-hou/WMIP/tree/main/releases/2026-10/examples/submission/example-qwen3-4b-replay">See an example</a>
+        </div>
+      </div>
     </section>
 
     <section class="generator-section" id="generator" aria-labelledby="generator-title">
