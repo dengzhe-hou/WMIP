@@ -1,0 +1,37 @@
+{
+  "submission_id": "example-qwen3-4b-replay",
+  "submitted": "2026-11-13",
+  "metadata": {
+    "model_name": "example-qwen3-4b-replay",
+    "checkpoint": "Qwen/Qwen3-4B-Instruct-2507 (stored responses from the paper, replayed)",
+    "revision": "responses in releases/2026-10/data/responses/{local,budget/local,ext/local}/qwen3-4b-instruct-2507.jsonl",
+    "server": "local replay server that returns the stored response for each prompt; no model was run",
+    "inference_settings": "wmip.py run defaults: temperature 0, no extra body, item-specific output budgets",
+    "precision": "not applicable (replayed text)",
+    "hardware": "not applicable (replayed text)",
+    "command": "python wmip.py run --base-url http://127.0.0.1:18765/v1 --model qwen3-4b-instruct-2507 --label example-qwen3-4b-replay --out-dir ex_run --concurrency 8",
+    "code_revision": "v2026.10.5",
+    "evidence_url": "https://github.com/dengzhe-hou/WMIP/tree/main/releases/2026-10/data/responses/local",
+    "notes": "Worked example of a complete submission. It replays the paper's Qwen3-4B-Instruct-2507 responses, so its scores equal that published row. It lives outside submissions/ and is not shown on the leaderboard."
+  },
+  "scores": {
+    "core": 0.016667,
+    "arithmetic": 0.933333,
+    "cancellation": 0.55,
+    "written_steps": 1.0,
+    "budget_last": 0.7,
+    "intermediate": 0.0,
+    "tracking": 0.0,
+    "readout": 0.033333
+  },
+  "coverage": {
+    "core": "60/60",
+    "arithmetic": "90/90",
+    "cancellation": "100/100",
+    "written_steps": "60/60",
+    "budget_last": "60/60",
+    "intermediate": "60/60",
+    "tracking": "60/60",
+    "readout": "60/60"
+  }
+}

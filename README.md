@@ -86,7 +86,7 @@ For other models, check the model card.
 
 ## Submit your results
 
-A complete run can join the [leaderboard](https://dengzhe-hou.github.io/WMIP/#community). Package it with `python wmip.py package` and open a pull request that adds it under `submissions/`. The check rescores the included responses with the published rules. The [submission guide](submissions/README.md) has the steps.
+A complete run can join the [leaderboard](https://dengzhe-hou.github.io/WMIP/#community). Package it with `python wmip.py package` and open a pull request that adds it under `submissions/`. The check rescores the included responses with the published rules. The [submission guide](submissions/README.md) has the steps and a [worked example](releases/2026-10/examples/submission/example-qwen3-4b-replay). Without a pull request, use the [result form](https://github.com/dengzhe-hou/WMIP/issues/new?template=result_report.yml).
 
 ## Reproduce the paper
 

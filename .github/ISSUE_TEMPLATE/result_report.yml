@@ -1,0 +1,67 @@
+name: Report a result
+description: Share a complete WMIP run without opening a pull request. A maintainer packages it and opens the pull request for you.
+title: "Result: <model name>"
+labels: ["community result"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form if you prefer not to open a pull request yourself. The leaderboard only accepts complete runs of all three banks, rescored from the raw responses. See the [submission guide](https://github.com/dengzhe-hou/WMIP/tree/main/submissions) and the [worked example](https://github.com/dengzhe-hou/WMIP/tree/main/releases/2026-10/examples/submission/example-qwen3-4b-replay).
+  - type: input
+    id: model
+    attributes:
+      label: Model name
+      description: The `--label` of your `wmip.py run` (by default its `--model`).
+    validations:
+      required: true
+  - type: input
+    id: checkpoint
+    attributes:
+      label: Checkpoint and revision
+      description: Model repository or API model ID, with the exact revision or provider version.
+    validations:
+      required: true
+  - type: textarea
+    id: settings
+    attributes:
+      label: Inference settings
+      description: Serving stack and version, thinking setting, temperature, `--extra-body`, precision and hardware.
+    validations:
+      required: true
+  - type: textarea
+    id: command
+    attributes:
+      label: Command
+      description: The exact `wmip.py run` command, without API keys.
+      render: shell
+    validations:
+      required: true
+  - type: input
+    id: run_files
+    attributes:
+      label: Link to the run directory
+      description: An archive of your `--out-dir` (the three response files and their `.runs.jsonl` records), for example on Hugging Face, Zenodo or a GitHub release. Do not include API keys.
+    validations:
+      required: true
+  - type: textarea
+    id: comparison
+    attributes:
+      label: Comparison table
+      description: Paste the output of `python wmip.py compare --run-dir <your run>`.
+      render: text
+  - type: input
+    id: evidence
+    attributes:
+      label: Evidence link
+      description: An https link to the model card or run notes.
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: The run covers all three banks with no missing responses, and one inference setting produced it.
+          required: true
+        - label: The archive contains no API keys, credentials or model weights.
+          required: true
