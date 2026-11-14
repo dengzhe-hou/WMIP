@@ -1,0 +1,58 @@
+name: Report an error
+description: A wrong gold answer, a scoring mistake, a bug in the code, or an error in the docs or the leaderboard.
+title: "Error: <short description>"
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Every gold answer is computed by code, so an item ID and the answer you expected are usually enough to check a report. To add your own model's results, use the [result form](https://github.com/dengzhe-hou/WMIP/issues/new?template=result_report.yml) instead.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What is wrong?
+      options:
+        - Gold answer of an item
+        - Scoring of a response
+        - Code (crash or wrong output)
+        - Documentation or project website
+        - Leaderboard entry
+        - Something else
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Release or commit
+      description: For example `v2026.10.5`, or a commit hash.
+      placeholder: v2026.10.5
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: Where
+      description: The `item_id` (for example `A-k3-s2026-p0`) and its bank (main, budget or ext), or the file, command, page or leaderboard row.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected
+      description: The answer, score or behavior you expected, and how you worked it out.
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual
+      description: What the release gives instead. Paste any error output here.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: How to reproduce
+      description: Commands or steps, if they are not obvious from the above.
+      render: shell
